@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>토닥쌤과 함께하는 통수시간</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap">
+<style>
+/* 파스텔 학급신문: 상단 제호 + 2단 편집(왼쪽 개념면 / 오른쪽 관심면). 목록·기사 화면은 1단 기사면.
+   개념마다 고유 파스텔색: 평균=분홍, 중앙값=하늘, 최빈값=민트, 산포도=라벤더 */
+:root{
+  --bg:#fdf6ee; --paper:#fffbf6; --paper-2:#fff1e4; --card:#ffffff;
+  --ink:#3d3550; --ink-2:#776d8c; --rule:#3d3550; --hair:#eee2d6; --line:#f4b6c8;
+  --pink:#ffdce6; --sky:#d8ebff; --mint:#d4f2e3; --lav:#e8e0ff; --lemon:#fff2c2; --peach:#ffe2cf;
+  --pink-d:#d4567e; --sky-d:#3a78c4; --mint-d:#258f60; --lav-d:#7a5fc8; --lemon-d:#a57b00; --peach-d:#c9662f;
+  --accent:var(--pink-d);
+  --c-mean:var(--pink-d); --c-median:var(--sky-d); --c-mode:var(--mint-d);
+  --c-a:var(--sky-d); --c-b:var(--peach-d);
+  --ok:#258f60; --no:#d4567e; --bar:#9cc4f2;
+  --f-display:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-ui:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-hand:"Gaegu","Gowun Dodum",cursive;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1928; --paper:#221f31; --paper-2:#2c283d; --card:#2a2639;
+    --ink:#f2edfb; --ink-2:#b4abca; --rule:#f2edfb; --hair:#3c3752; --line:#8a4f66;
+    --pink:#4a2e3e; --sky:#273a55; --mint:#21443a; --lav:#3a315a; --lemon:#463f25; --peach:#4a3326;
+    --pink-d:#ff9fbc; --sky-d:#94c3ff; --mint-d:#80dcb2; --lav-d:#bfaaff; --lemon-d:#f0d072; --peach-d:#ffb68c;
+    --ok:#80dcb2; --no:#ff9fbc; --bar:#6e92c6;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1928; --paper:#221f31; --paper-2:#2c283d; --card:#2a2639;
+  --ink:#f2edfb; --ink-2:#b4abca; --rule:#f2edfb; --hair:#3c3752; --line:#8a4f66;
+  --pink:#4a2e3e; --sky:#273a55; --mint:#21443a; --lav:#3a315a; --lemon:#463f25; --peach:#4a3326;
+  --pink-d:#ff9fbc; --sky-d:#94c3ff; --mint-d:#80dcb2; --lav-d:#bfaaff; --lemon-d:#f0d072; --peach-d:#ffb68c;
+  --ok:#80dcb2; --no:#ff9fbc; --bar:#6e92c6;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;padding-inline:16px;padding-block:20px 48px}
+.sheet{max-width:1120px;margin:0 auto}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+p{margin:0}
+
+/* 제호 */
+.masthead{text-align:center;border-bottom:4px double var(--rule);padding-bottom:10px}
+.dateline{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--f-ui);font-size:13px;color:var(--ink-2);border-bottom:1px solid var(--rule);padding-bottom:6px;letter-spacing:.02em}
+.title-btn{background:none;border:0;cursor:pointer;padding:0;display:block;margin:14px auto 4px}
+.title-btn h1{font-weight:900;font-size:clamp(30px,6.4vw,64px);letter-spacing:-.02em}
+.title-btn h1 .pre{display:block;font-size:.34em;font-weight:600;letter-spacing:.12em;color:var(--ink-2);margin-bottom:4px}
+.motto{font-size:15px;color:var(--ink-2);font-style:italic}
+.nav{display:flex;justify-content:center;gap:4px 18px;flex-wrap:wrap;font-family:var(--f-ui);font-size:14px;margin-top:10px;border-top:1px solid var(--rule);padding-top:8px}
+.nav button{background:none;border:0;cursor:pointer;padding:2px 4px}
+.nav button[aria-current="page"]{font-weight:700;text-decoration:underline;text-underline-offset:4px}
+
+/* 1면 2단 */
+.front{display:grid;grid-template-columns:1fr 1fr;margin-top:18px}
+.col{min-width:0;padding-block:4px 8px}
+.col-left{padding-right:24px;border-right:1px solid var(--rule)}
+.col-right{padding-left:24px}
+.kicker{display:inline-block;font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--paper);background:var(--ink);padding:2px 8px;margin-bottom:8px}
+.col-head h2{font-size:26px;font-weight:900}
+.col-head{border-bottom:2px solid var(--rule);padding-bottom:10px;margin-bottom:14px}
+.lead{font-size:16px;color:var(--ink);margin-bottom:16px}
+.lead::first-letter{font-size:2.4em;font-weight:900;float:left;line-height:1;padding:4px 6px 0 0;font-family:var(--f-display)}
+
+.concept{padding-block:14px;border-top:1px solid var(--hair)}
+.concept:first-of-type{border-top:0}
+.concept h3{font-size:22px;font-weight:900;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.concept h3 small{font-family:var(--f-ui);font-size:12px;font-weight:500;color:var(--ink-2);letter-spacing:.1em}
+.concept .def{margin-top:6px}
+.formula{font-family:var(--f-ui);font-size:14px;background:var(--paper-2);padding:6px 10px;margin-top:8px;display:inline-block;max-width:100%}
+.concept .use{margin-top:8px;font-size:15px;color:var(--ink-2)}
+.concept dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px}
+.concept dt{font-weight:700}
+.concept dd{margin:0}
+.more{margin-top:10px;background:none;border:1px solid var(--rule);cursor:pointer;padding:6px 12px;font-family:var(--f-ui);font-size:14px;font-weight:700;display:inline-flex;gap:8px;align-items:center}
+.more:hover{background:var(--ink);color:var(--paper)}
+
+.fields{list-style:none;margin:0;padding:0}
+.fields li+li{border-top:1px solid var(--hair)}
+.field-btn{width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.field-btn .f-name{font-family:var(--f-display);font-size:21px;font-weight:900}
+.field-btn .f-count{font-family:var(--f-ui);font-size:13px;color:var(--ink-2)}
+.field-btn .f-desc{grid-column:1/-1;font-size:15px;color:var(--ink-2)}
+.field-btn:hover .f-name{text-decoration:underline;text-underline-offset:5px}
+.box-note{margin-top:18px;border:1px solid var(--rule);padding:12px 14px;font-size:15px}
+.box-note strong{font-family:var(--f-ui)}
+
+/* 기사면(목록, 학습) */
+.page{max-width:780px;margin:22px auto 0}
+.back{background:none;border:0;cursor:pointer;font-family:var(--f-ui);font-size:14px;padding:4px 0;color:var(--ink-2)}
+.back:hover{color:var(--ink);text-decoration:underline}
+.page-head{border-bottom:2px solid var(--rule);padding-bottom:12px;margin:8px 0 16px}
+.page-head h2{font-size:clamp(24px,4.4vw,34px);font-weight:900}
+.byline{font-family:var(--f-ui);font-size:13px;color:var(--ink-2);margin-top:6px}
+.recap{background:var(--paper-2);padding:12px 14px;font-size:15px;margin-bottom:16px}
+
+.stories{list-style:none;margin:0;padding:0}
+.stories li+li{border-top:1px solid var(--hair)}
+.story-btn{width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:14px 0;display:grid;gap:4px}
+.story-btn h3{font-size:20px;font-weight:700}
+.story-btn:hover h3{text-decoration:underline;text-underline-offset:4px}
+.story-btn p{font-size:15px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--f-ui);font-size:12px}
+.tag{border:1px solid var(--ink-2);color:var(--ink-2);padding:0 6px}
+.done{background:var(--ok);color:var(--paper);padding:0 6px;font-weight:700}
+
+.story-lead{font-size:17px;margin-bottom:14px}
+.focus{border-left:4px solid var(--accent);padding:4px 0 4px 12px;margin-bottom:16px;font-size:15px}
+.focus b{font-family:var(--f-ui);color:var(--accent)}
+
+.viz{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding-block:12px;margin-bottom:22px}
+.viz-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.viz-top h3{font-size:17px}
+.tabs{display:inline-flex;border:1px solid var(--rule);font-family:var(--f-ui);font-size:13px}
+.tabs button{background:none;border:0;cursor:pointer;padding:4px 12px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.viz-body{min-width:0}
+.tablewrap{overflow-x:auto}
+table.data{border-collapse:collapse;font-family:var(--f-ui);font-size:14px;font-variant-numeric:tabular-nums;min-width:100%}
+table.data th,table.data td{border:1px solid var(--hair);padding:5px 9px;text-align:center;white-space:nowrap}
+table.data th{background:var(--paper-2);font-weight:700}
+table.data th[scope=row]{text-align:left}
+.caption{font-family:var(--f-ui);font-size:12px;color:var(--ink-2);margin-top:8px}
+svg.chart{display:block;width:100%;height:auto;font-family:var(--f-ui)}
+svg .bar{fill:var(--bar)}
+svg .axis{stroke:var(--ink);stroke-width:1}
+svg .grid{stroke:var(--hair);stroke-width:1}
+svg .lbl{fill:var(--ink-2)}
+svg .val{fill:var(--ink);font-weight:700}
+svg .m-mean{stroke:var(--c-mean)} svg .t-mean{fill:var(--c-mean)}
+svg .m-median{stroke:var(--c-median)} svg .t-median{fill:var(--c-median)}
+svg .m-mode{stroke:var(--c-mode)} svg .t-mode{fill:var(--c-mode)}
+svg .ga{fill:var(--c-a)} svg .gb{fill:var(--c-b)}
+svg .marker{stroke-width:2;stroke-dasharray:6 4;fill:none}
+svg .mtext{font-weight:700;font-size:12px;paint-order:stroke;stroke:var(--paper);stroke-width:4px}
+
+/* 문제 */
+.qs{display:grid;gap:22px}
+.q{min-width:0}
+.q h4{font-size:18px;font-weight:700;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.qno{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.08em;border:1px solid var(--rule);padding:0 6px;flex:none}
+.hint{font-size:14px;color:var(--ink-2);margin-top:4px}
+.fields-row{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:10px;font-family:var(--f-ui);font-size:14px}
+.fields-row label{display:flex;align-items:center;gap:8px}
+.inp{font-family:var(--f-ui);font-size:16px;font-variant-numeric:tabular-nums;width:8.5em;padding:6px 8px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink)}
+.inp.sm{width:4.4em;padding:4px 6px;text-align:center;font-size:15px}
+.inp.ok{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.inp.no{border-color:var(--no);box-shadow:inset 0 0 0 1px var(--no)}
+select.inp{width:auto}
+.q-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{font-family:var(--f-ui);font-size:14px;font-weight:700;padding:6px 14px;cursor:pointer;background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.btn.ghost{background:none;color:var(--ink)}
+.btn:hover{opacity:.88}
+.fb{font-family:var(--f-ui);font-size:14px;margin-top:8px;min-height:1.2em}
+.fb.ok{color:var(--ok);font-weight:700}
+.fb.no{color:var(--no)}
+.solution{margin-top:8px;background:var(--paper-2);padding:10px 12px;font-family:var(--f-ui);font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+.solution .mid{background:var(--ink);color:var(--paper);padding:0 4px}
+.note{font-size:15px;background:var(--paper-2);padding:10px 12px}
+
+.choose{border:2px solid var(--rule);padding:14px}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.opt{display:flex;align-items:center;gap:6px;border:1px solid var(--ink-2);padding:6px 12px;cursor:pointer;font-family:var(--f-ui);font-size:15px}
+.opt:has(input:checked){background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.opt input{accent-color:var(--accent)}
+.reason-l{display:block;font-family:var(--f-ui);font-size:14px;font-weight:700;margin-top:12px}
+textarea.inp{width:100%;min-height:90px;resize:vertical;margin-top:6px;line-height:1.6}
+.explain{margin-top:14px;border-top:1px solid var(--rule);padding-top:12px}
+.explain h5{font-family:var(--f-display);font-size:17px;margin:0 0 6px}
+.explain .verdict{font-family:var(--f-ui);font-size:14px;font-weight:700;margin-bottom:8px}
+.explain .stats{font-family:var(--f-ui);font-size:14px;margin-top:10px;display:flex;gap:6px 16px;flex-wrap:wrap}
+.sw{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:baseline}
+
+.note-list{list-style:none;margin:0;padding:0}
+.note-list li{border-top:1px solid var(--hair);padding:12px 0}
+.note-list h3{font-size:18px}
+.note-list p{font-size:15px}
+.empty{color:var(--ink-2);padding:20px 0}
+footer{margin-top:40px;border-top:4px double var(--rule);padding-top:10px;font-family:var(--f-ui);font-size:12px;color:var(--ink-2);text-align:center}
+
+/* 떠 있는 계산기 */
+.calc-tab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:40;writing-mode:vertical-rl;letter-spacing:.3em;
+  font-family:var(--f-ui);font-size:13px;font-weight:700;background:var(--ink);color:var(--paper);border:0;cursor:pointer;
+  padding:14px 7px;opacity:.38;transition:opacity .2s;margin-right:env(safe-area-inset-right,0px)}
+.calc-tab:hover,.calc-tab:focus-visible,.calc-tab[aria-expanded="true"]{opacity:1}
+.calc{position:fixed;right:44px;top:max(80px,calc(50% - 230px));z-index:50;width:264px;background:var(--paper);color:var(--ink);
+  border:2px solid var(--rule);box-shadow:0 10px 30px rgba(0,0,0,.18);font-family:var(--f-ui)}
+.calc-head{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 6px 12px;background:var(--ink);color:var(--paper);cursor:move;touch-action:none;user-select:none}
+.calc-head b{font-size:14px;letter-spacing:.1em}
+.calc-head button{background:none;border:0;color:var(--paper);cursor:pointer;font-size:18px;line-height:1;padding:2px 8px}
+.calc-screen{padding:10px 12px;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums}
+.calc-screen .expr{font-size:13px;color:var(--ink-2);min-height:1.4em;overflow-wrap:anywhere}
+.calc-screen .out{font-size:26px;font-weight:700;min-height:1.3em;overflow-wrap:anywhere;line-height:1.3}
+.calc-screen .out.err{font-size:15px;color:var(--no)}
+.calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border-bottom:1px solid var(--hair)}
+.calc-keys button{border:0;background:var(--paper);cursor:pointer;font-size:17px;padding:10px 0;font-variant-numeric:tabular-nums}
+.calc-keys button:hover{background:var(--paper-2)}
+.calc-keys .op{background:var(--paper-2);font-weight:700}
+.calc-keys .eq{background:var(--ink);color:var(--paper);grid-column:span 2;font-weight:700}
+.calc-keys .eq:hover{background:var(--ink);opacity:.88}
+.calc-keys .fn{font-size:14px;color:var(--ink-2)}
+.calc-foot{padding:8px 10px;display:grid;gap:6px}
+.calc-foot .btn{width:100%}
+.calc-msg{font-size:12px;color:var(--ink-2);min-height:1.2em;margin:0}
+
+@media (max-width:760px){
+  .front{grid-template-columns:1fr}
+  .col-left{padding-right:0;border-right:0}
+  .col-right{padding-left:0;border-top:4px double var(--rule);margin-top:18px;padding-top:16px}
+}
+@media (max-width:600px){
+  .calc{left:8px!important;right:8px;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;max-width:420px;margin:0 auto}
+  .calc-head{cursor:default}
+  .calc-keys button{padding:8px 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+/* ===== 파스텔 학급신문 꾸미기 (신문 틀은 그대로, 색·글씨·모서리만 부드럽게) ===== */
+body{background-color:var(--bg);background-image:radial-gradient(var(--hair) 1.2px,transparent 1.4px);background-size:22px 22px;font-size:16.5px}
+.sheet{background:var(--paper);border-radius:28px;padding:22px clamp(14px,3vw,38px) 26px;box-shadow:0 8px 0 var(--pink),0 18px 40px rgba(122,95,200,.10)}
+.title-btn h1,.col-head h2,.concept h3,.page-head h2,.story-btn h3,.q h4,.field-btn .f-name,.explain h5,.note-list h3,.viz-top h3,.kicker,.more,.btn,.nav button,.calc-head b,.calc-tab{font-family:var(--f-display);font-weight:400}
+
+/* 제호 */
+.masthead{border-bottom:4px double var(--line)}
+.dateline{border-bottom:2px dotted var(--hair);font-size:13px}
+.dateline{align-items:flex-start}
+.dateline span{background:var(--paper-2);border-radius:999px;padding:1px 10px}
+.issue{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-width:0;max-width:100%}
+.copyright{font-size:11.5px;color:var(--lav-d);padding-left:4px;line-height:1.4}
+.title-btn h1{font-size:clamp(44px,9vw,92px);letter-spacing:.02em;line-height:1.1}
+.title-btn h1 .pre{font-family:var(--f-hand);font-weight:700;font-size:.32em;letter-spacing:.04em;color:var(--lav-d)}
+.title-btn h1 .ch{display:inline-block;transition:transform .2s}
+.title-btn:hover h1 .ch:nth-child(odd){transform:rotate(-4deg)}
+.title-btn:hover h1 .ch:nth-child(even){transform:rotate(4deg)}
+.ch1{color:var(--pink-d)} .ch2{color:var(--sky-d)} .ch3{color:var(--mint-d)} .ch4{color:var(--lav-d)}
+.motto{font-family:var(--f-hand);font-style:normal;font-size:21px;color:var(--ink-2)}
+.nav{border-top:0;gap:8px;padding-top:10px}
+.nav button{border-radius:999px;padding:4px 16px;background:var(--paper-2);font-size:15px;border:2px solid transparent}
+.nav [data-cat="mean"]{background:var(--pink)} .nav [data-cat="median"]{background:var(--sky)}
+.nav [data-cat="mode"]{background:var(--mint)} .nav [data-cat="spread"]{background:var(--lav)}
+.nav [data-go="note"]{background:var(--lemon)}
+.nav button[aria-current="page"]{text-decoration:none;border-color:var(--ink)}
+.nav button:hover{transform:translateY(-1px)}
+
+/* 1면 2단 */
+.col-left{border-right:2px dashed var(--hair)}
+.kicker{border-radius:999px;padding:2px 12px;font-size:14px;letter-spacing:.06em;background:var(--lav);color:var(--lav-d)}
+.col-right .kicker{background:var(--mint);color:var(--mint-d)}
+.col-head{border-bottom:3px dotted var(--line)}
+.col-head h2{font-size:27px}
+.lead::first-letter{font-family:var(--f-display);font-weight:400;background:var(--lemon);color:var(--lemon-d);border-radius:14px;padding:6px 9px 2px;margin:4px 8px 0 0}
+
+.concept{--tint:var(--paper-2);--tint-d:var(--ink)}
+[data-c="mean"]{--tint:var(--pink);--tint-d:var(--pink-d)}
+[data-c="median"]{--tint:var(--sky);--tint-d:var(--sky-d)}
+[data-c="mode"]{--tint:var(--mint);--tint-d:var(--mint-d)}
+[data-c="spread"]{--tint:var(--lav);--tint-d:var(--lav-d)}
+.concept{background:var(--tint);border-radius:20px;padding:16px 18px;border-top:0}
+.concept+.concept{margin-top:12px}
+.concept h3{color:var(--tint-d);font-size:25px}
+.concept .use{color:var(--ink)}
+.formula{background:var(--card);border-radius:10px}
+.more{border:0;border-radius:999px;background:var(--tint-d);color:var(--paper);font-size:15px;padding:7px 16px}
+.more:hover{background:var(--tint-d);color:var(--paper);transform:translateY(-1px)}
+
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.fields li+li{border-top:0}
+.fields li:nth-child(6n+1){--tint:var(--pink)} .fields li:nth-child(6n+2){--tint:var(--sky)}
+.fields li:nth-child(6n+3){--tint:var(--mint)} .fields li:nth-child(6n+4){--tint:var(--lav)}
+.fields li:nth-child(6n+5){--tint:var(--lemon)} .fields li:nth-child(6n+6){--tint:var(--peach)}
+.field-btn{background:var(--tint);border-radius:18px;padding:14px 16px;height:100%;grid-template-columns:1fr;align-content:start;transition:transform .15s}
+.field-btn:hover{transform:translateY(-2px)}
+.field-btn:hover .f-name{text-decoration:none}
+.field-btn .f-name{font-size:22px}
+.field-btn .f-count{order:3;justify-self:start;background:var(--card);border-radius:999px;padding:0 10px;margin-top:6px}
+.field-btn .f-desc{color:var(--ink)}
+.box-note{border:0;border-radius:20px;background:var(--lemon);padding:14px 16px}
+.box-note strong{font-family:var(--f-hand);font-size:22px;color:var(--lemon-d)}
+
+/* 목록·기사면 */
+.back{border-radius:999px;background:var(--paper-2);padding:4px 14px}
+.page-head{border-bottom:3px dotted var(--line)}
+.page[data-c] .kicker{background:var(--tint);color:var(--tint-d)}
+.recap{border-radius:18px;background:var(--tint,var(--paper-2))}
+.stories li+li{border-top:2px dashed var(--hair)}
+.story-btn{border-radius:16px;padding:14px 12px;transition:background .15s}
+.story-btn:hover{background:var(--paper-2)}
+.story-btn:hover h3{text-decoration:none}
+.tag{border:0;border-radius:999px;background:var(--sky);color:var(--sky-d);padding:0 10px}
+.done{border-radius:999px;background:var(--mint);color:var(--mint-d);padding:0 10px}
+.focus{border-left:0;background:var(--tint);border-radius:16px;padding:10px 14px}
+.focus b{font-family:var(--f-display);font-weight:400;color:var(--tint-d)}
+.story-lead{font-size:17.5px}
+
+.viz{background:var(--card);border:2px solid var(--hair);border-radius:20px;padding:14px 16px}
+.tabs{border:0;background:var(--paper-2);border-radius:999px;padding:3px}
+.tabs button{border-radius:999px;padding:4px 14px}
+.tabs button[aria-selected="true"]{background:var(--sky-d);color:var(--paper)}
+.tablewrap{border-radius:12px}
+table.data th{background:var(--sky)}
+svg .mtext{stroke:var(--card)}
+
+.q{background:var(--card);border:2px solid var(--hair);border-radius:20px;padding:16px 18px}
+.q h4{font-size:19px}
+.qno{font-family:var(--f-display);font-weight:400;border:0;border-radius:999px;background:var(--lav);color:var(--lav-d);padding:1px 10px;font-size:13px}
+.inp{border:2px solid var(--hair);border-radius:12px;background:var(--paper)}
+.inp:focus{border-color:var(--sky-d);outline:none}
+.inp.sm{border-radius:10px}
+.btn{border:0;border-radius:999px;background:var(--sky-d);color:var(--paper);padding:7px 18px;font-size:15px}
+.btn.ghost{background:var(--paper-2);color:var(--ink)}
+.solution{background:var(--lemon);border-radius:14px}
+.solution .mid{background:var(--pink-d);color:var(--paper);border-radius:6px}
+.note{background:var(--paper-2);border-radius:14px}
+.choose{border:2px dashed var(--line)}
+.opt{border:2px solid var(--hair);border-radius:999px;padding:6px 16px}
+.opt:has(input:checked){background:var(--pink);color:var(--ink);border-color:var(--pink-d)}
+.explain{border-top:2px dashed var(--line)}
+.explain h5{color:var(--pink-d);font-size:20px}
+.sw{border-radius:50%}
+footer{border-top:4px double var(--line);font-family:var(--f-hand);font-size:17px}
+
+/* 계산기 */
+.calc-tab{background:var(--lav-d);color:var(--paper);border-radius:16px 0 0 16px;opacity:.5;font-size:15px;letter-spacing:.2em}
+.calc{border:2px solid var(--lav-d);border-radius:20px;overflow:hidden;background:var(--card);box-shadow:0 14px 34px rgba(122,95,200,.22)}
+.calc-head{background:var(--lav);color:var(--lav-d)}
+.calc-head button{color:var(--lav-d)}
+.calc-head b{font-size:16px}
+.calc-keys button{background:var(--card)}
+.calc-keys .op{background:var(--sky);color:var(--sky-d)}
+.calc-keys .eq{background:var(--pink-d);color:var(--paper)}
+.calc-keys .eq:hover{background:var(--pink-d)}
+.calc-screen{border-bottom:2px solid var(--hair)}
+
+@media (max-width:760px){
+  .col-left{border-right:0}
+  .col-right{border-top:4px double var(--line)}
+}
+@media (max-width:480px){
+  body{padding-inline:10px}
+  .sheet{border-radius:20px}
+  .q,.viz{padding:14px 12px}
+}
+@media (prefers-reduced-motion:reduce){.title-btn:hover h1 .ch{transform:none}}
+</style>
+
+<div class="sheet">
+  <header class="masthead">
+    <div class="dateline"><div class="issue"><span>제1호</span><small class="copyright">ⓒ 2026 토닥쌤. 이 사이트의 저작권은 토닥쌤에게 있습니다.</small></div><span id="today"></span><span>중학교 3학년 수학 · 통계</span></div>
+    <button class="title-btn" data-go="home" aria-label="1면으로 가기">
+      <h1><span class="pre">토닥쌤과 함께하는</span><span class="ch ch1">통</span><span class="ch ch2">수</span><span class="ch ch3">시</span><span class="ch ch4">간</span></h1>
+    </button>
+    <p class="motto">통계로 세상을 읽는 시간</p>
+    <nav class="nav" aria-label="면 이동">
+      <button data-go="home" id="nav-home">1면</button>
+      <button data-cat="mean">평균</button>
+      <button data-cat="median">중앙값</button>
+      <button data-cat="mode">최빈값</button>
+      <button data-cat="spread">산포도</button>
+      <button data-go="note" id="nav-note">내 학습 노트</button>
+    </nav>
+  </header>
+  <main id="main"></main>
+  <footer>이 신문에 실린 모든 통계 자료는 수업을 위해 만든 가상 자료입니다.<br>ⓒ 2026 토닥쌤. 무단 복제와 배포를 금합니다.</footer>
+</div>
+
+<button class="calc-tab" id="calc-tab" aria-expanded="false" aria-controls="calc">계산기</button>
+<section class="calc" id="calc" role="dialog" aria-label="계산기" hidden>
+  <div class="calc-head" id="calc-head"><b>계산기</b><button id="calc-close" aria-label="계산기 닫기">×</button></div>
+  <div class="calc-screen" aria-live="polite"><div class="expr" id="calc-expr"></div><div class="out" id="calc-out">0</div></div>
+  <div class="calc-keys" id="calc-keys">
+    <button class="fn" data-k="C">C</button><button class="fn" data-k="back" aria-label="한 글자 지우기">⌫</button><button class="fn" data-k="(">(</button><button class="fn" data-k=")">)</button>
+    <button class="fn" data-k="√" aria-label="제곱근">√</button><button class="fn" data-k="²" aria-label="제곱">x²</button><button class="fn" data-k="Ans" aria-label="직전 답">Ans</button><button class="op" data-k="÷">÷</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="op" data-k="×">×</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="op" data-k="−">−</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button class="op" data-k="+">+</button>
+    <button data-k="0">0</button><button data-k=".">.</button><button class="eq" data-k="=">=</button>
+  </div>
+  <div class="calc-foot">
+    <button class="btn" id="calc-put">이 값을 답 칸에 넣기</button>
+    <p class="calc-msg" id="calc-msg">답 칸을 먼저 누른 뒤 계산하면 결과를 바로 넣을 수 있어요.</p>
+  </div>
+</section>
+
+<script>
+/* ================================================================
+   하나의 데이터베이스(DATA)
+   - cat   : 왼쪽 개념면 분류 (mean 평균 / median 중앙값 / mode 최빈값 / spread 산포도)
+   - field : 오른쪽 관심면 분류 (FIELDS의 id)
+   - kind  : num(숫자 자료) / cat(항목별 개수) / two(두 집단 비교)
+   자료를 바꾸거나 늘리려면 이 배열만 고치면 양쪽 면에 함께 반영됩니다.
+   ================================================================ */
+const FIELDS = [
+  {id:'sports',  name:'스포츠',        desc:'경기 기록, 선수 연봉, 운동화 사이즈'},
+  {id:'kpop',    name:'K-pop · 음악',  desc:'아이돌 멤버, 음원 스트리밍, 오디션'},
+  {id:'game',    name:'게임 · e스포츠', desc:'랭크 게임 기록, 아이템 구매, 캐릭터 선택'},
+  {id:'sns',     name:'유튜브 · SNS',  desc:'조회수, 사용 시간, 자주 쓰는 앱'},
+  {id:'food',    name:'음식 · 급식',   desc:'급식 메뉴, 분식집 가격, 배달 시간'},
+  {id:'animal',  name:'동물',          desc:'반려동물, 보호소 고양이, 농장 달걀'},
+  {id:'weather', name:'날씨 · 환경',   desc:'최고기온, 한 달 날씨, 두 도시 비교'},
+  {id:'school',  name:'학교생활',      desc:'수행평가, 용돈, 반티 사이즈'}
+];
+
+const CATS = {
+  mean:   {name:'평균',   hanja:'平均',   short:'모든 값을 고르게 나눈 값'},
+  median: {name:'중앙값', hanja:'中央값', short:'크기순으로 한가운데 값'},
+  mode:   {name:'최빈값', hanja:'最頻값', short:'가장 많이 나타나는 값'},
+  spread: {name:'산포도', hanja:'散布度', short:'흩어진 정도'}
+};
+
+const DATA = [
+  /* ---------- 평균이 의미 있는 자료 ---------- */
+  {id:'m1', cat:'mean', field:'sports', kind:'num', title:'농구부 주장 지우의 최근 10경기 득점',
+   story:'학교 농구부 주장 지우는 다음 시즌 목표를 세우려고 지난 10경기 득점을 정리했어요. 코치님은 지우가 "한 경기에 보통 몇 점을 넣는지" 알고 싶어 합니다.',
+   unit:'점', xTitle:'경기', labels:['1','2','3','4','5','6','7','8','9','10'], values:[18,22,20,17,23,19,21,20,24,16], best:'mean',
+   why:'점수가 16~24점 사이에 고르게 모여 있고, 유난히 크거나 작은 값(극단값)이 없어요. 이럴 때 평균은 10경기 기록을 모두 반영하고 "평균 × 경기 수 = 총득점"으로 바로 이어지기 때문에 가장 의미 있는 대푯값이에요. 이 자료는 평균, 중앙값, 최빈값이 모두 20점으로 같아요. 자료가 고르게 퍼져 있으면 세 대푯값이 비슷해진다는 것도 기억해 두세요.'},
+  {id:'m2', cat:'mean', field:'weather', kind:'num', title:'10월 둘째 주 우리 동네 낮 최고기온',
+   story:'기상 동아리가 학교 옥상에 온도계를 설치하고 일주일 동안 매일 낮 최고기온을 기록했어요. 이번 주 날씨를 숫자 하나로 소개하려고 합니다.',
+   unit:'°C', xTitle:'요일', labels:['월','화','수','목','금','토','일'], values:[21,23,22,24,20,23,21], best:'mean',
+   why:'기온이 20~24°C에 고르게 퍼져 있고 극단값이 없어요. 평균 22°C는 일주일 날씨 전체를 반영하므로 이번 주를 대표하기에 알맞아요. 이 자료는 21°C와 23°C가 두 번씩 나와 최빈값이 두 개예요. 최빈값이 여러 개면 자료를 대표하기 어렵다는 점도 확인해 보세요.'},
+  {id:'m3', cat:'mean', field:'kpop', kind:'num', title:'신인 아이돌 그룹 ‘신갈보이즈’ 멤버 7명의 키',
+   story:'데뷔를 앞둔 신인 그룹 신갈보이즈의 무대 의상 담당자가 의상의 기본 길이를 정하려고 멤버들의 키를 조사했어요.',
+   unit:'cm', xTitle:'멤버', labels:['도현','준서','시우','건우','태오','하람','은호'], values:[177,181,174,179,183,172,180], ymin:160, best:'mean',
+   why:'키가 172~183cm 사이에 고르게 퍼져 있고 극단값이 없어요. 평균 178cm는 모든 멤버의 키를 반영하므로 그룹의 "보통 키"로 알맞아요. 중앙값 179cm도 비슷하지만 평균은 모든 값을 계산에 쓴다는 장점이 있어요. 키가 모두 달라서 최빈값으로는 대표할 수 없어요.'},
+  {id:'m4', cat:'mean', field:'school', kind:'num', title:'우리 모둠 8명의 수학 수행평가 점수 (20점 만점)',
+   story:'선생님이 모둠별 수행평가 결과를 비교하려고 해요. 우리 모둠의 점수를 하나의 값으로 나타내야 합니다.',
+   unit:'점', xTitle:'학생 번호', labels:['1','2','3','4','5','6','7','8'], values:[15,17,14,18,16,15,19,14], best:'mean',
+   why:'점수가 14~19점에 고르게 퍼져 있어 평균 16점이 모둠 전체 실력을 잘 나타내요. 여러 모둠을 비교할 때도 평균을 가장 많이 써요. 14점과 15점이 두 번씩 나와 최빈값은 두 개라서 대표하기 어려워요.'},
+  {id:'m5', cat:'mean', field:'game', kind:'num', title:'민준이의 랭크 게임 10판 킬 수',
+   story:'e스포츠 동아리에 지원하려는 민준이는 지원서에 "한 판에 보통 몇 킬"을 적으려고 최근 10판 기록을 모았어요.',
+   unit:'킬', xTitle:'판', labels:['1','2','3','4','5','6','7','8','9','10'], values:[5,7,6,8,4,6,7,5,6,6], best:'mean',
+   why:'킬 수가 4~8 사이에 고르게 모여 있고 극단값이 없어요. 평균 6킬은 10판 전체 실력을 반영해요. 이 자료는 평균, 중앙값, 최빈값이 모두 6이라 무엇을 써도 비슷하지만, 기록을 소개할 때는 모든 판을 반영하는 평균을 주로 써요.'},
+  {id:'m6', cat:'mean', field:'animal', kind:'num', title:'같은 날 태어난 진돗개 새끼 6마리의 몸무게',
+   story:'생후 30일이 된 진돗개 새끼 6마리의 몸무게를 쟀어요. 수의사 선생님은 이 몸무게로 하루 사료 양을 정하려고 합니다.',
+   unit:'kg', xTitle:'새끼', labels:['첫째','둘째','셋째','넷째','다섯째','여섯째'], values:[3.2,3.5,3.0,3.4,3.1,3.6], best:'mean',
+   why:'몸무게가 3.0~3.6kg에 고르게 퍼져 있어요. 평균 3.3kg은 "이 무렵 새끼들의 보통 몸무게"로 쓸 수 있고, 사료 양처럼 전체 양을 나눠 계산할 때도 평균이 편리해요. 값이 모두 달라 최빈값으로는 대표할 수 없어요.'},
+  {id:'m7', cat:'mean', field:'sns', kind:'num', title:'서윤이의 일주일 하루 SNS 사용 시간',
+   story:'디지털 생활 습관 점검 숙제로 서윤이는 일주일 동안 매일 SNS 사용 시간을 기록했어요.',
+   unit:'분', xTitle:'요일', labels:['월','화','수','목','금','토','일'], values:[45,60,50,55,40,65,70], best:'mean',
+   why:'사용 시간이 40~70분에 고르게 퍼져 있고 극단값이 없어요. 평균 55분에 7을 곱하면 일주일 총 사용 시간(385분)이 되니, 생활 습관을 점검할 때 평균이 가장 쓸모 있어요.'},
+  {id:'m8', cat:'mean', field:'food', kind:'num', title:'학교 앞 분식집 메뉴 6가지 가격',
+   story:'모둠 친구 6명이 분식집에서 각자 다른 메뉴를 하나씩 시키려고 해요. 한 사람당 돈을 얼마씩 걷으면 될까요?',
+   unit:'원', xTitle:'메뉴', labels:['김밥','라면','떡볶이','순대','쫄면','돈가스'], values:[3000,3500,4000,4000,4500,5000], best:'mean',
+   why:'가격이 3000~5000원에 고르게 퍼져 있어요. 평균 4000원은 "총액 ÷ 사람 수"이므로 한 사람이 낼 돈을 정할 때 딱 맞는 대푯값이에요. 이 자료는 중앙값과 최빈값도 4000원으로 같아요.'},
+
+  /* ---------- 중앙값이 의미 있는 자료 (극단값) ---------- */
+  {id:'d1', cat:'median', field:'sns', kind:'num', title:'새내기 요리 유튜버의 영상 9편 조회수',
+   story:'요리 채널을 시작한 지 석 달 된 유튜버가 광고 담당자에게 "제 영상은 보통 조회수가 이 정도예요"라고 소개하려고 해요. 그런데 9편 중 한 편이 우연히 크게 화제가 됐어요.',
+   unit:'천 회', xTitle:'영상', labels:['1','2','3','4','5','6','7','8','9'], values:[8,12,9,11,10,7,13,14,249], best:'median',
+   why:'9편 가운데 한 편(249천 회)만 엄청나게 많아요. 이 극단값 때문에 평균(37천 회)은 나머지 8편 중 어느 것과도 비슷하지 않아요. 중앙값 11천 회는 극단값의 영향을 거의 받지 않아서 "보통 영상의 조회수"를 정직하게 보여 줘요.'},
+  {id:'d2', cat:'median', field:'sports', kind:'num', title:'프로축구 ○○FC 선수 11명의 연봉',
+   story:'축구 기자가 "○○FC 선수들은 연봉을 보통 얼마나 받을까?"라는 기사를 쓰려고 해요. 이 팀에는 해외에서 영입한 스타 선수가 한 명 있어요.',
+   unit:'백만 원', xTitle:'선수', labels:['A','B','C','D','E','F','G','H','I','J','K'], values:[80,95,120,70,150,110,90,100,85,130,1610], best:'median',
+   why:'스타 선수 한 명의 연봉(1610백만 원)이 극단값이에요. 평균 240백만 원보다 많이 받는 선수는 11명 중 한 명뿐이라 평균은 "보통 선수"를 대표하지 못해요. 중앙값 100백만 원이 대부분 선수의 연봉을 잘 나타내요. 실제로 소득이나 연봉 통계에서는 중앙값을 자주 써요.'},
+  {id:'d3', cat:'median', field:'school', kind:'num', title:'우리 반 친구 10명의 한 달 용돈',
+   story:'학급 회의에서 "우리 반 학생의 한 달 용돈은 보통 얼마일까?"를 조사했어요. 한 친구는 이번 달에 명절 용돈을 받아 금액이 아주 커요.',
+   unit:'천 원', xTitle:'학생 번호', labels:['1','2','3','4','5','6','7','8','9','10'], values:[30,40,35,50,45,30,40,35,300,45], best:'median',
+   why:'한 친구의 300천 원이 극단값이에요. 이 값 때문에 평균은 65천 원이 됐지만 10명 중 9명은 50천 원 이하예요. 중앙값 40천 원이 우리 반의 "보통 용돈"을 더 잘 보여 줘요.'},
+  {id:'d4', cat:'median', field:'game', kind:'num', title:'게임 이용자 10명의 한 달 아이템 구매액',
+   story:'게임 회사가 "이용자들은 보통 한 달에 얼마를 쓸까?"를 알아보려고 이용자 10명을 무작위로 뽑았어요. 그중 한 명은 아이템을 아주 많이 사는 이용자였어요.',
+   unit:'천 원', xTitle:'이용자 번호', labels:['1','2','3','4','5','6','7','8','9','10'], values:[0,5,10,0,15,8,12,0,6,444], best:'median',
+   why:'한 명이 쓴 444천 원이 극단값이라 평균(50천 원)은 나머지 9명 누구와도 비슷하지 않아요. 중앙값 7천 원이 "보통 이용자"를 더 잘 나타내요. 그런데 최빈값 0원은 "아예 쓰지 않는 사람이 가장 많다"는 또 다른 사실을 알려 줘요. 어떤 질문에 답하려는지에 따라 의미 있는 대푯값이 달라질 수 있어요.'},
+  {id:'d5', cat:'median', field:'kpop', kind:'num', title:'신곡 8곡의 발매 첫 주 스트리밍 수',
+   story:'음원 사이트 편집자가 "이번 주 신곡들은 보통 얼마나 들렸을까?"를 정리하고 있어요. 8곡 중 한 곡은 인기 그룹의 컴백곡이에요.',
+   unit:'만 회', xTitle:'곡', labels:['A','B','C','D','E','F','G','H'], values:[42,38,55,47,40,51,45,610], best:'median',
+   why:'인기 그룹의 컴백곡 610만 회가 극단값이에요. 평균 116만 회보다 많이 들린 곡은 한 곡뿐이에요. 중앙값 46만 회가 신곡 대부분의 성적을 잘 나타내요.'},
+  {id:'d6', cat:'median', field:'animal', kind:'num', title:'보호소 고양이 9마리가 입양되기까지 걸린 날 수',
+   story:'동물 보호소에서 입양 홍보 포스터에 "보통 2주 정도면 새 가족을 만나요"라고 써도 될지 고민하고 있어요. 9마리 중 나이가 많은 고양이 한 마리는 아주 오래 기다렸어요.',
+   unit:'일', xTitle:'고양이', labels:['보리','콩이','나비','치즈','모모','루루','호두','까망','노랑이'], values:[12,15,9,20,14,11,18,13,122], best:'median',
+   why:'한 마리가 기다린 122일이 극단값이라 평균(26일)이 크게 올라갔어요. 9마리 중 8마리는 20일 안에 입양됐으니 중앙값 14일이 "보통 기다리는 기간"을 더 잘 보여 줘요. 극단값이 왜 생겼는지 살펴보는 것도 통계 공부예요. 나이 든 고양이가 왜 오래 기다렸을지 생각해 보세요.'},
+  {id:'d7', cat:'median', field:'food', kind:'num', title:'동네 음식점 8곳의 배달팁',
+   story:'배달 앱을 처음 쓰는 지아는 "우리 동네 배달팁은 보통 얼마일까?"가 궁금해졌어요. 8곳 중 한 곳은 산 위에 있어 배달팁이 아주 비싸요.',
+   unit:'원', xTitle:'음식점', labels:['가','나','다','라','마','바','사','아'], values:[2000,2500,3000,2000,3500,2500,3000,11500], best:'median',
+   why:'산 위 음식점의 배달팁 11500원이 극단값이에요. 평균 3750원보다 비싼 곳은 한 곳뿐이에요. 중앙값 2750원이 우리 동네의 "보통 배달팁"을 더 잘 나타내요.'},
+
+  /* ---------- 최빈값이 의미 있는 자료 ---------- */
+  {id:'o1', cat:'mode', field:'sports', kind:'num', chart:'freq', freqUnit:'켤레', title:'운동화 매장에서 하루 동안 팔린 15켤레의 사이즈',
+   story:'운동화 매장 점장님이 다음 주에 새 운동화를 주문하려고 해요. 어떤 사이즈를 가장 많이 들여놓아야 할까요?',
+   unit:'mm', xTitle:'손님', labels:['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'], values:[250,255,260,260,265,260,270,255,260,245,265,260,250,275,260], best:'mode',
+   why:'점장님에게 필요한 정보는 "가장 많이 팔린 사이즈"예요. 평균 259.3mm짜리 운동화는 실제로 없어요. 최빈값 260mm가 주문할 때 가장 의미 있는 대푯값이에요.'},
+  {id:'o2', cat:'mode', field:'food', kind:'cat', title:'우리 반이 뽑은 최애 급식 메뉴',
+   story:'학생회가 급식실에 "학생들이 가장 좋아하는 메뉴"를 건의하려고 반별로 투표를 했어요.',
+   unit:'명', xTitle:'메뉴', cats:[['돈가스',9],['떡볶이',6],['마라탕',7],['치킨마요',4],['카레',2]], best:'mode',
+   why:'메뉴 이름처럼 숫자가 아닌 자료는 평균이나 중앙값을 구할 수 없어요. 가장 많은 표를 받은 메뉴, 곧 최빈값이 이 자료에서 쓸 수 있는 유일한 대푯값이에요.'},
+  {id:'o3', cat:'mode', field:'kpop', kind:'cat', title:'우리 학년이 좋아하는 음악 장르',
+   story:'학교 축제 공연팀이 무대에 올릴 곡을 고르려고 학년 친구들에게 좋아하는 음악 장르를 물었어요.',
+   unit:'명', xTitle:'장르', cats:[['아이돌 팝',12],['힙합',8],['발라드',6],['밴드 음악',7],['트로트',2]], best:'mode',
+   why:'장르는 숫자가 아니라서 더하거나 크기순으로 늘어놓을 수 없어요. 가장 많은 친구가 고른 장르(최빈값)를 알면 공연 곡을 정하는 데 바로 쓸 수 있어요.'},
+  {id:'o4', cat:'mode', field:'game', kind:'cat', title:'교내 e스포츠 대회에서 선택된 캐릭터',
+   story:'교내 e스포츠 대회 운영진이 다음 대회의 밸런스를 맞추려고 참가자들이 가장 많이 고른 캐릭터를 조사했어요.',
+   unit:'명', xTitle:'캐릭터', cats:[['기사',5],['마법사',11],['궁수',7],['치유사',4],['암살자',6]], best:'mode',
+   why:'캐릭터는 숫자가 아닌 자료라서 최빈값만 구할 수 있어요. 가장 많이 선택된 캐릭터가 너무 강한 건 아닌지 살펴보는 데 최빈값이 쓰여요.'},
+  {id:'o5', cat:'mode', field:'animal', kind:'cat', title:'우리 반 친구들이 키우는 반려동물',
+   story:'과학 시간에 "반려동물 돌봄 안내서"를 만들기로 했어요. 친구들이 가장 많이 키우는 동물부터 다루려고 해요.',
+   unit:'명', xTitle:'반려동물', cats:[['강아지',8],['고양이',5],['물고기',3],['햄스터',2],['거북이',1]], best:'mode',
+   why:'동물 종류는 숫자가 아니므로 평균이나 중앙값을 구할 수 없어요. 가장 많이 키우는 동물(최빈값)이 안내서의 첫 장을 정하는 기준이 돼요.'},
+  {id:'o6', cat:'mode', field:'school', kind:'cat', title:'반티 사이즈 주문 현황',
+   story:'반티를 주문하는데 업체에서 "가장 많이 주문한 사이즈는 여유분을 몇 벌 더 보내 드려요"라고 했어요.',
+   unit:'벌', xTitle:'사이즈', cats:[['S',3],['M',9],['L',11],['XL',5]], best:'mode',
+   why:'사이즈는 S < M < L < XL처럼 순서는 있지만 숫자가 아니라서 평균을 구할 수 없어요. 여유분을 받을 사이즈를 정하려면 가장 많이 주문한 사이즈(최빈값)를 알아야 해요.'},
+  {id:'o7', cat:'mode', field:'weather', kind:'cat', title:'9월 한 달(30일)의 날씨',
+   story:'기상 동아리가 "우리 동네 9월의 대표 날씨"를 소개하려고 한 달 동안 날씨를 매일 기록했어요.',
+   unit:'일', xTitle:'날씨', cats:[['맑음',14],['구름 많음',8],['흐림',3],['비',5]], best:'mode',
+   why:'날씨 종류는 숫자가 아니라서 최빈값으로 대표해요. 30일 중 맑은 날이 가장 많았으니 "9월은 맑은 날이 많은 달"이라고 소개할 수 있어요.'},
+  {id:'o8', cat:'mode', field:'sns', kind:'cat', title:'친구들이 가장 자주 쓰는 SNS 종류',
+   story:'학급 신문부가 "우리 반 친구들이 가장 자주 쓰는 SNS"를 조사해 기사로 쓰려고 해요.',
+   unit:'명', xTitle:'SNS 종류', cats:[['사진 공유',11],['동영상',9],['짧은 영상',5],['메신저',3],['기타',2]], best:'mode',
+   why:'SNS 종류는 숫자가 아닌 자료예요. 가장 많은 친구가 고른 종류(최빈값)가 기사 제목이 될 수 있어요.'},
+
+  /* ---------- 산포도가 의미 있는 자료 (평균이 같은 두 집단) ---------- */
+  {id:'s1', cat:'spread', field:'sports', kind:'two', title:'양궁 동아리 두 친구의 6발 점수',
+   story:'다음 대회에 학교 대표 한 명을 보내야 해요. 두 친구의 평균 점수는 같아요. 누구를 보내면 좋을까요?',
+   unit:'점', xTitle:'발', labels:['1','2','3','4','5','6'], groups:[['하준',[7,9,6,7,6,7]],['도윤',[10,5,8,4,8,7]]],
+   q:'점수가 더 고르게(안정적으로) 나오는 선수는 누구일까요?', best:'하준',
+   why:'두 선수의 평균은 7점으로 같지만 표준편차는 하준 1점, 도윤 2점이에요. 표준편차가 작을수록 자료가 평균 가까이 모여 있으니 하준이가 더 안정적이에요. 다만 도윤이는 10점도 쏠 수 있으니, 큰 점수가 꼭 필요한 상황이라면 다르게 판단할 수도 있어요.'},
+  {id:'s2', cat:'spread', field:'weather', kind:'two', title:'두 도시의 6일 동안 낮 최고기온',
+   story:'가족 여행지를 고르는데 두 도시의 평균 기온이 같아요. 날씨 변화가 적은 곳에 가고 싶다면 어디가 좋을까요?',
+   unit:'°C', xTitle:'날짜', labels:['1일','2일','3일','4일','5일','6일'], groups:[['바닷가 도시',[20,22,19,20,19,20]],['내륙 도시',[17,25,20,22,16,20]]],
+   q:'기온 변화가 더 작은 도시는 어디일까요?', best:'바닷가 도시',
+   why:'평균은 둘 다 20°C지만 표준편차는 바닷가 도시 1°C, 내륙 도시 3°C예요. 바다는 육지보다 천천히 데워지고 천천히 식어서 바닷가 도시의 기온이 더 고른 편이에요.'},
+  {id:'s3', cat:'spread', field:'food', kind:'two', title:'두 분식집의 배달 시간 (최근 6번 주문)',
+   story:'두 분식집 모두 배달에 평균 30분이 걸린다고 해요. 약속 시간에 맞춰 음식을 받아야 한다면 어느 가게가 좋을까요?',
+   unit:'분', xTitle:'주문', labels:['1','2','3','4','5','6'], groups:[['A 분식',[31,27,33,30,28,31]],['B 분식',[22,40,30,34,24,30]]],
+   q:'배달 시간을 예측하기 쉬운 가게는 어디일까요?', best:'A 분식',
+   why:'평균은 둘 다 30분이지만 표준편차는 A 분식 2분, B 분식 6분이에요. B 분식은 22분 만에 올 때도, 40분이 걸릴 때도 있어서 도착 시간을 예측하기 어려워요.'},
+  {id:'s4', cat:'spread', field:'game', kind:'two', title:'두 게이머의 6판 점수',
+   story:'학교 대표 팀에 한 명을 더 뽑아야 해요. 두 후보의 평균 점수는 같아요.',
+   unit:'점', xTitle:'판', labels:['1','2','3','4','5','6'], groups:[['지호',[51,48,53,50,47,51]],['은찬',[44,60,50,54,42,50]]],
+   q:'팀 대회에서 꾸준한 점수가 필요하다면 누구를 뽑을까요?', best:'지호',
+   why:'평균은 둘 다 50점이지만 표준편차는 지호 2점, 은찬 6점이에요. 지호는 매 판 비슷한 점수를 내니 꾸준함이 필요한 팀에 알맞아요. 은찬은 60점을 낼 때도 있어서 "한 방"이 필요하면 고려해 볼 만해요.'},
+  {id:'s5', cat:'spread', field:'school', kind:'two', title:'두 모둠의 수학 퀴즈 점수 (10점 만점)',
+   story:'선생님이 두 모둠의 퀴즈 결과를 보고 어느 모둠에 친구끼리 가르쳐 주는 시간이 더 필요한지 고민하고 있어요.',
+   unit:'점', xTitle:'모둠원', labels:['1','2','3','4','5','6'], groups:[['1모둠',[6,8,5,6,5,6]],['2모둠',[10,1,6,9,4,6]]],
+   q:'모둠원들의 실력이 더 고른 모둠은 어디일까요?', best:'1모둠',
+   why:'평균은 둘 다 6점이지만 표준편차는 1모둠 1점, 2모둠 3점이에요. 1모둠이 더 고르고, 2모둠은 실력 차이가 커서 친구끼리 가르쳐 주는 활동이 더 도움이 될 거예요.'},
+  {id:'s6', cat:'spread', field:'kpop', kind:'two', title:'오디션 참가자 두 명이 받은 심사위원 6명의 점수',
+   story:'오디션 프로그램에서 두 참가자의 평균 점수가 85점으로 같게 나왔어요. 그런데 시청자 게시판에서는 "한 참가자는 심사위원마다 평가가 달랐다"는 이야기가 나와요.',
+   unit:'점', xTitle:'심사위원', labels:['1','2','3','4','5','6'], groups:[['가온',[86,83,88,85,82,86]],['나래',[79,95,85,89,77,85]]],
+   q:'심사위원들의 평가가 더 크게 엇갈린 참가자는 누구일까요?', best:'나래',
+   why:'평균은 둘 다 85점이지만 표준편차는 가온 2점, 나래 6점이에요. 나래는 95점을 준 심사위원도, 77점을 준 심사위원도 있어서 평가가 크게 엇갈렸어요. 이번에는 산포도가 큰 쪽을 찾는 문제였다는 점도 눈여겨보세요.'},
+  {id:'s7', cat:'spread', field:'animal', kind:'two', title:'두 농장 달걀 6개의 무게',
+   story:'제과점에서 케이크를 만들 때 달걀 크기가 고르면 맛이 일정하대요. 두 농장 달걀의 평균 무게는 같아요.',
+   unit:'g', xTitle:'달걀', labels:['1','2','3','4','5','6'], groups:[['햇살농장',[60,62,59,60,59,60]],['바람농장',[56,60,68,60,56,60]]],
+   q:'크기가 고른 달걀을 납품해야 한다면 어느 농장을 고를까요?', best:'햇살농장',
+   why:'평균은 둘 다 60g이지만 표준편차는 햇살농장 1g, 바람농장 4g이에요. 햇살농장 달걀이 평균 가까이 모여 있어 크기가 더 고르답니다.'}
+];
+
+/* ================= 통계 계산 ================= */
+const sum = a => a.reduce((s,x)=>s+x,0);
+const mean = a => sum(a)/a.length;
+const sorted = a => [...a].sort((x,y)=>x-y);
+function median(a){const s=sorted(a),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;}
+function modes(a){
+  const m=new Map(); a.forEach(x=>m.set(x,(m.get(x)||0)+1));
+  const max=Math.max(...m.values());
+  if(max<2) return {list:[],max};
+  return {list:[...m].filter(([,v])=>v===max).map(([k])=>k).sort((x,y)=>x-y),max};
+}
+const variance = a => {const m=mean(a);return mean(a.map(x=>(x-m)**2));};
+const r2 = x => Math.round(x*100)/100;
+function fmt(x){return r2(x).toLocaleString('ko-KR',{maximumFractionDigits:2});}
+function needsRound(x){return Math.abs(x*10-Math.round(x*10))>1e-9;}
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fieldName = id => (FIELDS.find(f=>f.id===id)||{}).name||'';
+const byId = id => DATA.find(d=>d.id===id);
+
+function parseNum(raw){
+  let s=String(raw).trim().replace(/[−–]/g,'-').replace(/루트/g,'√').replace(/[,\s]/g,'').replace(/[^0-9.\-\/√]/g,'');
+  if(!s) return NaN;
+  if(s.startsWith('√')) return Math.sqrt(parseNum(s.slice(1)));
+  if(s.includes('/')){const [a,b]=s.split('/');return Number(a)/Number(b);}
+  return Number(s);
+}
+const close = (x,ans) => Number.isFinite(x) && Math.abs(x-ans) <= 0.05+1e-9;
+
+/* ================= 저장(학습 노트) ================= */
+const KEY='tongsu-note-v1';
+function loadNote(){try{return JSON.parse(localStorage.getItem(KEY))||{name:'',done:{}};}catch(e){return {name:'',done:{}};}}
+function saveNote(n){try{localStorage.setItem(KEY,JSON.stringify(n));}catch(e){}}
+let NOTE=loadNote();
+
+/* ================= 그래프 (SVG) ================= */
+function niceStep(range,count){
+  const raw=range/count, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p;
+  return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;
+}
+function barChart({labels,values,ymin=0,unit,xTitle,markers=[],W}){
+  const H=Math.round(Math.min(320,Math.max(230,W*0.5)));
+  const L=50,R=14,T=26,B=46, pw=W-L-R, ph=H-T-B;
+  const top=Math.max(...values,...markers.map(m=>m.v));
+  const step=niceStep(top-ymin,4), ymax=Math.ceil(top/step)*step;
+  const y=v=>T+ph-(v-ymin)/(ymax-ymin)*ph;
+  const n=values.length, bw=pw/n, w=Math.min(bw*0.62,56);
+  const fs=Math.max(9,Math.min(12,bw/3.2));
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(xTitle)}별 막대그래프">`;
+  for(let v=ymin;v<=ymax+1e-9;v+=step){
+    s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/>`;
+    s+=`<text class="lbl" x="${L-6}" y="${y(v)+4}" text-anchor="end" font-size="11">${fmt(v)}</text>`;
+  }
+  values.forEach((v,i)=>{
+    const cx=L+bw*i+bw/2;
+    s+=`<rect class="bar" rx="${Math.min(6,w/4)}" x="${cx-w/2}" y="${y(v)}" width="${w}" height="${Math.max(0,y(ymin)-y(v))}"/>`;
+    s+=`<text class="val" x="${cx}" y="${y(v)-5}" text-anchor="middle" font-size="${fs}">${fmt(v)}</text>`;
+    s+=`<text class="lbl" x="${cx}" y="${T+ph+16}" text-anchor="middle" font-size="${fs}">${esc(labels[i])}</text>`;
+  });
+  s+=`<line class="axis" x1="${L}" x2="${W-R}" y1="${y(ymin)}" y2="${y(ymin)}"/><line class="axis" x1="${L}" x2="${L}" y1="${T}" y2="${y(ymin)}"/>`;
+  s+=`<text class="lbl" x="${L+pw/2}" y="${H-6}" text-anchor="middle" font-size="12">${esc(xTitle)}</text>`;
+  s+=`<text class="lbl" x="${L-6}" y="${T-12}" text-anchor="end" font-size="11">(${esc(unit)})</text>`;
+  const pos=[{x:W-R-4,a:'end'},{x:L+6,a:'start'},{x:L+pw/2,a:'middle'}];
+  markers.forEach((m,i)=>{
+    const yy=y(m.v),p=pos[i%3];
+    s+=`<line class="marker m-${m.k}" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/>`;
+    s+=`<text class="mtext t-${m.k}" x="${p.x}" y="${yy-6}" text-anchor="${p.a}">${m.t}</text>`;
+  });
+  return s+'</svg>';
+}
+function dotPlot({groups,unit,showMeans,W}){
+  const all=groups.flatMap(g=>g[1]);
+  let lo=Math.floor(Math.min(...all))-1, hi=Math.ceil(Math.max(...all))+1;
+  const L=Math.min(110,W*0.26),R=18,T=8,rowH=86,H=T+groups.length*rowH+40, pw=W-L-R;
+  let step=[1,2,5,10,20].find(s=>(hi-lo)/s<=Math.max(6,pw/42))||50;
+  lo=Math.floor(lo/step)*step; hi=Math.ceil(hi/step)*step;
+  const x=v=>L+(v-lo)/(hi-lo)*pw;
+  let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="두 자료의 점그래프">`;
+  groups.forEach(([name,vals],gi)=>{
+    const base=T+(gi+1)*rowH-12, cls=gi?'gb':'ga';
+    s+=`<line class="grid" x1="${L}" x2="${W-R}" y1="${base}" y2="${base}"/>`;
+    s+=`<text class="${cls}" x="4" y="${base-30}" font-size="14" font-weight="700">${esc(name)}</text>`;
+    if(showMeans){
+      const m=mean(vals),sd=Math.sqrt(variance(vals));
+      s+=`<text class="lbl" x="4" y="${base-12}" font-size="11">표준편차 ${fmt(sd)}</text>`;
+      s+=`<line class="marker m-mean" x1="${x(m)}" x2="${x(m)}" y1="${base-rowH+18}" y2="${base}"/>`;
+      s+=`<text class="mtext t-mean" x="${x(m)+5}" y="${base-rowH+28}">평균 ${fmt(m)}</text>`;
+    }
+    const cnt={};
+    vals.forEach(v=>{const k=cnt[v]=(cnt[v]||0)+1;s+=`<circle class="${cls}" cx="${x(v)}" cy="${base-8-(k-1)*15}" r="6.5"/>`;});
+  });
+  const ay=T+groups.length*rowH+2;
+  s+=`<line class="axis" x1="${L}" x2="${W-R}" y1="${ay}" y2="${ay}"/>`;
+  for(let v=lo;v<=hi+1e-9;v+=step){
+    s+=`<line class="axis" x1="${x(v)}" x2="${x(v)}" y1="${ay}" y2="${ay+5}"/><text class="lbl" x="${x(v)}" y="${ay+18}" text-anchor="middle" font-size="11">${fmt(v)}</text>`;
+  }
+  s+=`<text class="lbl" x="${W-R}" y="${H-4}" text-anchor="end" font-size="11">(${esc(unit)})</text>`;
+  return s+'</svg>';
+}
+
+/* ================= 표 ================= */
+function dataTable(d){
+  if(d.kind==='cat'){
+    return `<div class="tablewrap"><table class="data"><tr><th scope="row">${esc(d.xTitle)}</th>${d.cats.map(c=>`<th>${esc(c[0])}</th>`).join('')}<th>합계</th></tr>
+      <tr><th scope="row">수 (${esc(d.unit)})</th>${d.cats.map(c=>`<td>${c[1]}</td>`).join('')}<td>${sum(d.cats.map(c=>c[1]))}</td></tr></table></div>`;
+  }
+  if(d.kind==='two'){
+    return `<div class="tablewrap"><table class="data"><tr><th scope="row">${esc(d.xTitle)}</th>${d.labels.map(l=>`<th>${esc(l)}</th>`).join('')}</tr>
+      ${d.groups.map(g=>`<tr><th scope="row">${esc(g[0])} (${esc(d.unit)})</th>${g[1].map(v=>`<td>${fmt(v)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  }
+  return `<div class="tablewrap"><table class="data"><tr><th scope="row">${esc(d.xTitle)}</th>${d.labels.map(l=>`<th>${esc(l)}</th>`).join('')}</tr>
+    <tr><th scope="row">${esc(d.unit)}</th>${d.values.map(v=>`<td>${fmt(v)}</td>`).join('')}</tr></table></div>`;
+}
+function chartFor(d,W,reveal){
+  if(d.kind==='cat') return barChart({labels:d.cats.map(c=>c[0]),values:d.cats.map(c=>c[1]),unit:d.unit,xTitle:d.xTitle,W});
+  if(d.kind==='two') return dotPlot({groups:d.groups,unit:d.unit,showMeans:reveal,W});
+  if(d.chart==='freq'){
+    const m=new Map(); sorted(d.values).forEach(v=>m.set(v,(m.get(v)||0)+1));
+    return barChart({labels:[...m.keys()].map(fmt),values:[...m.values()],unit:d.freqUnit,xTitle:`사이즈 (${d.unit})`,W});
+  }
+  let markers=[];
+  if(reveal){
+    markers.push({k:'mean',v:mean(d.values),t:`평균 ${fmt(mean(d.values))}`});
+    markers.push({k:'median',v:median(d.values),t:`중앙값 ${fmt(median(d.values))}`});
+    const mo=modes(d.values); if(mo.list.length===1) markers.push({k:'mode',v:mo.list[0],t:`최빈값 ${fmt(mo.list[0])}`});
+  }
+  return barChart({labels:d.labels,values:d.values,ymin:d.ymin||0,unit:d.unit,xTitle:d.xTitle,markers,W});
+}
+
+/* ================= 문제 만들기 ================= */
+function roundHint(x){return needsRound(x)?' (나누어떨어지지 않으면 반올림하여 소수 첫째 자리까지)':'';}
+function qMean(d){
+  const a=d.values,m=mean(a);
+  return {title:'이 자료의 평균을 구해 보시오.'+roundHint(m), hint:'평균 = (변량의 총합) ÷ (변량의 개수)',
+    fields:[{label:'평균',unit:d.unit,ans:m}],
+    sol:`(${a.map(fmt).join(' + ')}) ÷ ${a.length}<br>= ${fmt(sum(a))} ÷ ${a.length} = <b>${fmt(m)}${needsRound(m)?' …':''}</b> ${esc(d.unit)}`};
+}
+function qMedian(d){
+  const a=d.values,s=sorted(a),n=s.length,md=median(a);
+  const mid=n%2?[(n-1)/2]:[n/2-1,n/2];
+  const list=s.map((v,i)=>mid.includes(i)?`<span class="mid">${fmt(v)}</span>`:fmt(v)).join(', ');
+  const how=n%2?`변량이 ${n}개(홀수)이므로 ${(n+1)/2}번째 값이 중앙값이에요.`
+    :`변량이 ${n}개(짝수)이므로 ${n/2}번째와 ${n/2+1}번째 값의 평균이 중앙값이에요: (${fmt(s[n/2-1])} + ${fmt(s[n/2])}) ÷ 2`;
+  return {title:'이 자료의 중앙값을 구해 보시오.', hint:'먼저 작은 값부터 크기순으로 늘어놓아 보세요. 개수가 짝수이면 가운데 두 값의 평균이 중앙값이에요.',
+    fields:[{label:'중앙값',unit:d.unit,ans:md}], sol:`크기순: ${list}<br>${how} = <b>${fmt(md)}</b> ${esc(d.unit)}`};
+}
+function qMode(d){
+  const mo=modes(d.values);
+  if(mo.list.length===0) return {note:'최빈값: 이 자료는 모든 값이 한 번씩만 나와요. 그래서 최빈값으로는 자료를 대표하기 어려워요.'};
+  if(mo.list.length>2) return {note:`최빈값: ${mo.list.map(fmt).join(', ')}이 모두 ${mo.max}번씩 나와 최빈값이 ${mo.list.length}개예요. 최빈값이 이렇게 많으면 대푯값으로 쓰기 어려워요.`};
+  const two=mo.list.length===2;
+  return {title:two?'이 자료의 최빈값을 모두 구해 보시오. (여러 개면 쉼표로 구분)':'이 자료의 최빈값을 구해 보시오.',
+    hint:'가장 많이 나타나는 값을 찾아보세요. 같은 값끼리 묶어 개수를 세어 보면 쉬워요.',
+    fields:[{label:'최빈값',unit:d.unit,ans:mo.list,set:true}],
+    sol:`${mo.list.map(fmt).join('과 ')}${two?'이 각각':'이'} ${mo.max}번으로 가장 많이 나와요. 최빈값 = <b>${mo.list.map(fmt).join(', ')}</b> ${esc(d.unit)}`};
+}
+function qCatMode(d){
+  const max=Math.max(...d.cats.map(c=>c[1])), top=d.cats.find(c=>c[1]===max)[0];
+  return {title:'이 자료의 최빈값을 구해 보시오.', hint:'숫자가 아닌 자료에서는 가장 많이 나타난 항목이 최빈값이에요.',
+    fields:[{label:'최빈값',options:d.cats.map(c=>c[0]),ans:top,pick:true}],
+    sol:`가장 많은 항목: <b>${esc(top)}</b> (${max}${esc(d.unit)})<br>이 자료는 숫자가 아니라서 평균과 중앙값은 구할 수 없어요.`};
+}
+function spreadQs(d){
+  const G=d.groups.map(([name,v])=>({name,v,m:mean(v),va:variance(v)}));
+  return [
+    {title:'두 자료의 평균을 각각 구해 보시오.', hint:'평균 = (변량의 총합) ÷ (변량의 개수)',
+     fields:G.map(g=>({label:g.name,unit:d.unit,ans:g.m})),
+     sol:G.map(g=>`${esc(g.name)}: ${fmt(sum(g.v))} ÷ ${g.v.length} = <b>${fmt(g.m)}</b>`).join('<br>')},
+    {title:'각 변량의 편차를 구해 표를 채워 보시오.', hint:'편차 = (변량) − (평균). 편차를 모두 더하면 항상 0이 돼요.',
+     dev:G, fields:G.flatMap(g=>g.v.map(v=>({ans:v-g.m}))),
+     sol:G.map(g=>`${esc(g.name)}의 편차: ${g.v.map(v=>fmt(v-g.m)).join(', ')} (합 = 0)`).join('<br>')},
+    {title:'두 자료의 분산을 각각 구해 보시오.', hint:'분산 = (편차)²의 총합 ÷ (변량의 개수)',
+     fields:G.map(g=>({label:g.name,ans:g.va})),
+     sol:G.map(g=>`${esc(g.name)}: (편차)² = ${g.v.map(v=>fmt((v-g.m)**2)).join(', ')} → 합 ${fmt(sum(g.v.map(v=>(v-g.m)**2)))} ÷ ${g.v.length} = <b>${fmt(g.va)}</b>`).join('<br>')},
+    {title:'두 자료의 표준편차를 각각 구해 보시오.', hint:'표준편차 = √(분산)',
+     fields:G.map(g=>({label:g.name,unit:d.unit,ans:Math.sqrt(g.va)})),
+     sol:G.map(g=>`${esc(g.name)}: √${fmt(g.va)} = <b>${fmt(Math.sqrt(g.va))}</b> ${esc(d.unit)}`).join('<br>')}
+  ];
+}
+function buildQs(d,route){
+  if(d.kind==='two') return spreadQs(d);
+  if(d.kind==='cat') return [qCatMode(d)];
+  const order=route==='concept'&&d.cat!=='spread'?[d.cat,...['mean','median','mode'].filter(k=>k!==d.cat)]:['mean','median','mode'];
+  return order.map(k=>k==='mean'?qMean(d):k==='median'?qMedian(d):qMode(d));
+}
+
+/* ================= 화면 ================= */
+const main=document.getElementById('main');
+let view={name:'home'}; const stack=[];
+function go(next,push=true){ if(push) stack.push(view); view=next; render(); window.scrollTo(0,0); }
+function back(){ view=stack.pop()||{name:'home'}; render(); window.scrollTo(0,0); }
+
+function render(){
+  document.getElementById('nav-home').toggleAttribute('aria-current',false);
+  document.querySelectorAll('.nav button').forEach(b=>b.removeAttribute('aria-current'));
+  const cur = view.name==='home'?'[data-go="home"]':view.name==='note'?'[data-go="note"]':view.name==='cat'?`.nav [data-cat="${view.cat}"]`:null;
+  if(cur){const b=document.querySelector('.nav '+cur)||document.querySelector(cur); if(b) b.setAttribute('aria-current','page');}
+  if(view.name==='home') main.innerHTML=home();
+  else if(view.name==='cat') main.innerHTML=catPage(view.cat);
+  else if(view.name==='field') main.innerHTML=fieldPage(view.field);
+  else if(view.name==='note') { main.innerHTML=notePage(); }
+  else if(view.name==='learn') { main.innerHTML=learnPage(byId(view.id),view.route); drawViz(); }
+}
+
+const CONCEPTS = {
+  mean:`<p class="def">변량을 모두 더한 뒤 변량의 개수로 나눈 값이에요. 모든 자료를 고르게 나누어 가진다고 생각하면 쉬워요.</p>
+        <p class="formula">(평균) = (변량의 총합) ÷ (변량의 개수)</p>
+        <p class="use">이럴 때 써요: 자료가 고르게 퍼져 있고 유난히 크거나 작은 값(극단값)이 없을 때</p>`,
+  median:`<p class="def">자료를 작은 값부터 크기순으로 늘어놓았을 때 한가운데 있는 값이에요. 변량이 짝수 개이면 가운데 두 값의 평균이에요.</p>
+        <p class="formula">n이 홀수 → (n+1)/2 번째 값 · n이 짝수 → n/2 번째와 (n/2+1) 번째 값의 평균</p>
+        <p class="use">이럴 때 써요: 극단값이 있어서 평균이 자료를 제대로 대표하지 못할 때</p>`,
+  mode:`<p class="def">자료에서 가장 많이 나타나는 값이에요. 두 개 이상일 수도 있어요.</p>
+        <p class="formula">가장 많이 나타난 값(또는 항목) = 최빈값</p>
+        <p class="use">이럴 때 써요: 메뉴, 장르처럼 숫자가 아닌 자료이거나, 가장 인기 있는 것을 찾을 때</p>`,
+  spread:`<p class="def">자료가 대푯값을 중심으로 얼마나 흩어져 있는지 하나의 수로 나타낸 값이에요. 평균이 같아도 흩어진 정도는 다를 수 있어요.</p>
+        <dl><dt>편차</dt><dd>(변량) − (평균). 편차의 총합은 항상 0</dd>
+            <dt>분산</dt><dd>(편차)²의 총합 ÷ (변량의 개수)</dd>
+            <dt>표준편차</dt><dd>√(분산). 작을수록 자료가 평균 가까이 모여 있어요</dd></dl>
+        <p class="use">이럴 때 써요: 평균이 같은 두 자료 가운데 어느 쪽이 더 고른지 비교할 때</p>`
+};
+
+function home(){
+  const cnt=c=>DATA.filter(d=>d.cat===c).length;
+  return `<div class="front">
+    <section class="col col-left" aria-labelledby="h-left">
+      <div class="col-head"><span class="kicker">개념면</span><h2 id="h-left">대푯값과 산포도, 개념부터 차근차근</h2></div>
+      <p class="lead">자료 전체의 특징을 하나의 수로 나타낸 값을 대푯값이라고 해요. 대푯값에는 평균, 중앙값, 최빈값이 있고, 자료가 흩어진 정도는 산포도로 나타내요. 개념을 읽은 뒤 그 개념이 빛나는 통계자료를 골라 직접 풀어 보세요.</p>
+      ${['mean','median','mode','spread'].map(c=>`<article class="concept" data-c="${c}">
+        <h3>${CATS[c].name}<small>${CATS[c].hanja}</small></h3>${CONCEPTS[c]}
+        <button class="more" data-cat="${c}">${CATS[c].name} 통계자료 ${cnt(c)}건 보기 →</button></article>`).join('')}
+    </section>
+    <section class="col col-right" aria-labelledby="h-right">
+      <div class="col-head"><span class="kicker">관심면</span><h2 id="h-right">내가 좋아하는 분야에서 통계 찾기</h2></div>
+      <p class="lead">관심 있는 분야를 고르고, 그 안에서 마음에 드는 통계자료를 골라 보세요. 이 면에서는 어떤 대푯값이 어울리는 자료인지 미리 알려 주지 않아요. 그래프를 보고 직접 판단하는 것이 이 면의 과제예요.</p>
+      <ul class="fields">${FIELDS.map(f=>{const n=DATA.filter(d=>d.field===f.id).length;
+        return `<li><button class="field-btn" data-field="${f.id}"><span class="f-name">${esc(f.name)}</span><span class="f-count">통계자료 ${n}건</span><span class="f-desc">${esc(f.desc)}</span></button></li>`;}).join('')}</ul>
+      <div class="box-note"><strong>토닥쌤의 한마디</strong><br>같은 "보통"이라도 자료에 따라 평균이 맞을 때, 중앙값이 맞을 때, 최빈값이 맞을 때가 있어요. 계산보다 중요한 건 "왜 이 값이 이 자료를 가장 잘 대표하는가"를 설명하는 거예요.</div>
+    </section>
+  </div>`;
+}
+function storyItem(d,showField){
+  return `<li><button class="story-btn" data-learn="${d.id}">
+    <span class="meta">${showField?`<span class="tag">${esc(fieldName(d.field))}</span>`:''}${NOTE.done[d.id]?'<span class="done">학습 완료</span>':''}</span>
+    <h3>${esc(d.title)}</h3><p>${esc(d.story)}</p></button></li>`;
+}
+function catPage(c){
+  const list=DATA.filter(d=>d.cat===c);
+  return `<div class="page" data-c="${c}"><button class="back" data-back>← 이전 면으로</button>
+    <div class="page-head"><span class="kicker">개념면 · 자료실</span><h2>${CATS[c].name} 통계자료</h2>
+    <p class="byline">${CATS[c].name}이 의미 있는 통계자료 ${list.length}건 · 마음에 드는 자료를 골라 보세요</p></div>
+    <div class="recap">${CONCEPTS[c]}</div>
+    <ul class="stories">${list.map(d=>storyItem(d,true)).join('')}</ul></div>`;
+}
+function fieldPage(f){
+  const list=DATA.filter(d=>d.field===f), F=FIELDS.find(x=>x.id===f);
+  return `<div class="page"><button class="back" data-back>← 이전 면으로</button>
+    <div class="page-head"><span class="kicker">관심면</span><h2>${esc(F.name)}</h2>
+    <p class="byline">통계자료 ${list.length}건 · 어떤 대푯값이 어울릴지는 자료를 보고 직접 판단해 보세요</p></div>
+    <ul class="stories">${list.map(d=>storyItem(d,false)).join('')}</ul></div>`;
+}
+
+const FOCUS={
+  mean:'<b>오늘의 주인공: 평균</b> 자료가 고르게 퍼져 있을 때 평균이 왜 좋은 대푯값인지 확인해 봐요.',
+  median:'<b>오늘의 주인공: 중앙값</b> 극단값 하나가 평균을 얼마나 흔드는지, 중앙값은 왜 흔들리지 않는지 확인해 봐요.',
+  mode:'<b>오늘의 주인공: 최빈값</b> 평균과 중앙값으로는 답할 수 없는 질문에 최빈값이 어떻게 답하는지 확인해 봐요.',
+  spread:'<b>오늘의 주인공: 산포도</b> 평균이 같은 두 자료를 편차, 분산, 표준편차로 비교해 봐요.'
+};
+let cur={d:null,tab:'table',reveal:false,qs:[]};
+
+function learnPage(d,route){
+  cur={d,route,tab:route==='field'?'chart':'table',reveal:!!NOTE.done[d.id],qs:buildQs(d,route)};
+  const kick=route==='concept'?`개념면 · ${CATS[d.cat].name}`:`관심면 · ${fieldName(d.field)}`;
+  let no=0;
+  const qhtml=cur.qs.map((q,i)=>{
+    if(q.note) return `<div class="note">${esc(q.note)}</div>`;
+    no++;
+    let body;
+    if(q.dev){
+      let k=0;
+      body=`<div class="tablewrap" style="margin-top:10px"><table class="data"><tr><th scope="row">${esc(d.xTitle)}</th>${d.labels.map(l=>`<th>${esc(l)}</th>`).join('')}</tr>
+        ${q.dev.map(g=>`<tr><th scope="row">${esc(g.name)} 변량</th>${g.v.map(v=>`<td>${fmt(v)}</td>`).join('')}</tr>
+        <tr><th scope="row">${esc(g.name)} 편차</th>${g.v.map(()=>`<td><input class="inp sm" id="q${i}f${k++}" inputmode="decimal" aria-label="${esc(g.name)} 편차"></td>`).join('')}</tr>`).join('')}</table></div>`;
+    } else {
+      body=`<div class="fields-row">${q.fields.map((f,j)=>f.pick
+        ?`<label>${f.label} <select class="inp" id="q${i}f${j}"><option value="">고르기</option>${f.options.map(o=>`<option>${esc(o)}</option>`).join('')}</select></label>`
+        :`<label>${esc(f.label)} <input class="inp" id="q${i}f${j}" inputmode="decimal" autocomplete="off">${f.unit?esc(f.unit):''}</label>`).join('')}</div>`;
+    }
+    return `<section class="q" data-q="${i}"><h4><span class="qno">문제 ${no}</span>${esc(q.title)}</h4><p class="hint">${esc(q.hint)}</p>${body}
+      <div class="q-actions"><button class="btn" data-check="${i}">확인</button><button class="btn ghost" data-sol="${i}" aria-expanded="false">풀이 보기</button></div>
+      <p class="fb" id="fb${i}" aria-live="polite"></p><div class="solution" id="sol${i}" hidden>${q.sol}</div></section>`;
+  }).join('');
+  const isTwo=d.kind==='two';
+  const opts=isTwo?d.groups.map(g=>g[0]):['평균','중앙값','최빈값'];
+  const saved=NOTE.done[d.id]||{};
+  const chooseQ=isTwo?d.q:'이 자료를 가장 잘 대표하는 값은 무엇일까요?';
+  return `<div class="page"${route==='concept'?` data-c="${d.cat}"`:''}><button class="back" data-back>← 이전 면으로</button>
+    <div class="page-head"><span class="kicker">${esc(kick)}</span><h2>${esc(d.title)}</h2><p class="byline">토닥쌤 기자 · 수업용 가상 자료</p></div>
+    <p class="story-lead">${esc(d.story)}</p>
+    ${route==='concept'?`<p class="focus">${FOCUS[d.cat]}</p>`:''}
+    <section class="viz" aria-label="통계자료">
+      <div class="viz-top"><h3>통계자료</h3><div class="tabs" role="tablist">
+        <button role="tab" data-tab="table" aria-selected="${cur.tab==='table'}">표로 보기</button>
+        <button role="tab" data-tab="chart" aria-selected="${cur.tab==='chart'}">그래프로 보기</button></div></div>
+      <div class="viz-body" id="viz"></div><p class="caption" id="vizcap"></p>
+    </section>
+    <div class="qs">${qhtml}
+      <section class="q choose"><h4><span class="qno">문제 ${no+1}</span>${esc(chooseQ)}</h4>
+        <p class="hint">${isTwo?'앞에서 구한 값을 근거로 골라 보세요.':'앞에서 구한 값들을 비교해 보고, 이 자료의 상황에 가장 알맞은 대푯값을 고르세요.'}</p>
+        <div class="opts" role="radiogroup" aria-label="선택지">${opts.map((o,k)=>`<label class="opt"><input type="radio" name="pick" id="pick${k}" value="${esc(o)}" ${saved.choice===o?'checked':''}>${esc(o)}</label>`).join('')}</div>
+        <label class="reason-l" for="reason">그렇게 생각한 이유</label>
+        <textarea class="inp" id="reason" placeholder="예) 극단값이 있어서 평균은 …">${esc(saved.reason||'')}</textarea>
+        <div class="q-actions"><button class="btn" data-submit>제출하고 토닥쌤 해설 보기</button></div>
+        <p class="fb" id="fb-choose" aria-live="polite"></p>
+        <div class="explain" id="explain" ${saved.choice?'':'hidden'}>${saved.choice?explainHtml(d,saved.choice):''}</div>
+      </section>
+    </div></div>`;
+}
+function explainHtml(d,choice){
+  const isTwo=d.kind==='two';
+  const best=isTwo?d.best:CATS[d.best].name;
+  const same=choice===best;
+  let stats='';
+  if(d.kind==='num'){
+    const mo=modes(d.values);
+    stats=`<div class="stats"><span><i class="sw" style="background:var(--c-mean)"></i>평균 ${fmt(mean(d.values))}</span><span><i class="sw" style="background:var(--c-median)"></i>중앙값 ${fmt(median(d.values))}</span><span><i class="sw" style="background:var(--c-mode)"></i>최빈값 ${mo.list.length?mo.list.map(fmt).join(', '):'없음'}</span></div>`;
+  } else if(isTwo){
+    stats=`<div class="stats">${d.groups.map(g=>`<span>${esc(g[0])}: 평균 ${fmt(mean(g[1]))} · 분산 ${fmt(variance(g[1]))} · 표준편차 ${fmt(Math.sqrt(variance(g[1])))}</span>`).join('')}</div>`;
+  }
+  return `<h5>토닥쌤 해설</h5><p class="verdict">내 선택: ${esc(choice)} · 토닥쌤의 선택: ${esc(best)} — ${same?'같은 선택이에요!':'다른 선택이에요. 해설을 읽고 내 이유와 비교해 보세요.'}</p>
+    <p>${esc(d.why)}</p>${stats}`;
+}
+
+function notePage(){
+  const items=Object.entries(NOTE.done).map(([id,v])=>({d:byId(id),v})).filter(x=>x.d).sort((a,b)=>a.v.at-b.v.at);
+  return `<div class="page"><button class="back" data-back>← 이전 면으로</button>
+    <div class="page-head"><span class="kicker">내 학습 노트</span><h2>내가 공부한 통계자료</h2><p class="byline">이 기기의 브라우저에만 저장돼요. 다 끝나면 복사해서 선생님께 제출하세요.</p></div>
+    <div class="fields-row" style="margin-bottom:12px"><label for="stname">이름</label><input class="inp" id="stname" value="${esc(NOTE.name||'')}" placeholder="3학년 ○반 ○번 이름" style="width:16em"></div>
+    ${items.length?`<ul class="note-list">${items.map(({d,v})=>`<li><span class="meta"><span class="tag">${CATS[d.cat].name}</span><span class="tag">${esc(fieldName(d.field))}</span></span>
+      <h3>${esc(d.title)}</h3><p><b>내 선택:</b> ${esc(v.choice)}</p><p><b>이유:</b> ${esc(v.reason)}</p></li>`).join('')}</ul>
+      <div class="q-actions"><button class="btn" data-copy>학습 노트 복사하기</button><button class="btn ghost" data-clear>노트 비우기</button></div><p class="fb" id="fb-note" aria-live="polite"></p>
+      <textarea class="inp" id="copybox" hidden readonly></textarea>`
+      :`<p class="empty">아직 제출한 자료가 없어요. 1면에서 통계자료를 골라 마지막 문제까지 풀어 보세요.</p>`}</div>`;
+}
+function noteText(){
+  const items=Object.entries(NOTE.done).map(([id,v])=>({d:byId(id),v})).filter(x=>x.d).sort((a,b)=>a.v.at-b.v.at);
+  return `[통수시간 학습 노트] ${NOTE.name||''}\n`+items.map(({d,v},i)=>`${i+1}. ${d.title} (${CATS[d.cat].name})\n   내 선택: ${v.choice}\n   이유: ${v.reason}`).join('\n');
+}
+
+function drawViz(){
+  const box=document.getElementById('viz'); if(!box) return;
+  const d=cur.d;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===cur.tab));
+  const W=Math.max(300,Math.min(780,Math.round(box.clientWidth||600)));
+  box.innerHTML=cur.tab==='table'?dataTable(d):chartFor(d,W,cur.reveal);
+  let cap=d.kind==='cat'?`항목별 ${d.unit} 수 · 합계 ${sum(d.cats.map(c=>c[1]))}${d.unit}`:d.kind==='two'?`두 자료 모두 변량 ${d.labels.length}개 · 단위 ${d.unit}`:`변량 ${d.values.length}개 · 단위 ${d.unit}`;
+  if(cur.tab==='chart'&&d.ymin) cap+=` · 세로축은 ${d.ymin}부터 시작해요`;
+  if(cur.tab==='chart'&&d.chart==='freq') cap+=' · 사이즈별로 팔린 켤레 수를 나타낸 그래프예요';
+  if(cur.tab==='chart'&&d.kind==='two') cap+=' · 점 하나가 변량 하나예요';
+  if(cur.tab==='chart'&&cur.reveal&&d.kind!=='cat'&&d.chart!=='freq') cap+=' · 해설을 본 뒤라 대푯값 선이 함께 보여요';
+  document.getElementById('vizcap').textContent=cap;
+}
+
+function checkQ(i){
+  const q=cur.qs[i]; let ok=0;
+  q.fields.forEach((f,j)=>{
+    const el=document.getElementById(`q${i}f${j}`); let good;
+    if(f.pick) good=el.value===f.ans;
+    else if(f.set){const xs=el.value.split(/[,，、]+|\s+/).map(parseNum).filter(Number.isFinite);good=xs.length===f.ans.length&&f.ans.every(a=>xs.some(x=>close(x,a)));}
+    else good=close(parseNum(el.value),f.ans);
+    el.classList.toggle('ok',good); el.classList.toggle('no',!good); if(good) ok++;
+  });
+  const fb=document.getElementById('fb'+i);
+  if(ok===q.fields.length){fb.className='fb ok';fb.textContent='정답이에요! ✓';}
+  else{fb.className='fb no';fb.textContent=q.fields.length>2?`${q.fields.length}칸 중 ${ok}칸이 맞았어요. 빨간 칸을 다시 확인해 보세요.`:'다시 생각해 보세요. 막히면 "풀이 보기"를 눌러도 좋아요.';}
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.go==='home'){stack.length=0;go({name:'home'},false);}
+  else if(t.dataset.go==='note') go({name:'note'});
+  else if(t.dataset.cat) go({name:'cat',cat:t.dataset.cat});
+  else if(t.dataset.field) go({name:'field',field:t.dataset.field});
+  else if(t.dataset.learn) go({name:'learn',id:t.dataset.learn,route:view.name==='field'?'field':'concept'});
+  else if('back' in t.dataset) back();
+  else if(t.dataset.tab){cur.tab=t.dataset.tab;drawViz();}
+  else if(t.dataset.check!==undefined) checkQ(+t.dataset.check);
+  else if(t.dataset.sol!==undefined){const s=document.getElementById('sol'+t.dataset.sol);s.hidden=!s.hidden;t.setAttribute('aria-expanded',!s.hidden);t.textContent=s.hidden?'풀이 보기':'풀이 접기';}
+  else if('submit' in t.dataset){
+    const pick=document.querySelector('input[name=pick]:checked'), reason=document.getElementById('reason').value.trim(), fb=document.getElementById('fb-choose');
+    if(!pick){fb.className='fb no';fb.textContent='먼저 하나를 골라 주세요.';return;}
+    if(reason.length<5){fb.className='fb no';fb.textContent='이유를 한 문장 이상 적어 주세요.';return;}
+    fb.textContent='';
+    NOTE.done[cur.d.id]={choice:pick.value,reason,at:Date.now()}; saveNote(NOTE);
+    const ex=document.getElementById('explain'); ex.innerHTML=explainHtml(cur.d,pick.value); ex.hidden=false;
+    cur.reveal=true; if(cur.tab==='chart') drawViz(); else {cur.tab='chart';drawViz();}
+    ex.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  else if('copy' in t.dataset){
+    const txt=noteText(), fb=document.getElementById('fb-note');
+    const fallback=()=>{const b=document.getElementById('copybox');b.hidden=false;b.value=txt;b.select();fb.className='fb';fb.textContent='자동 복사가 막혀 있어요. 아래 글이 선택되어 있으니 Ctrl+C(휴대폰은 길게 눌러 복사)로 복사하세요.';};
+    try{navigator.clipboard.writeText(txt).then(()=>{fb.className='fb ok';fb.textContent='복사했어요. 과제 제출란에 붙여 넣으세요.';},fallback);}catch(err){fallback();}
+  }
+  else if('clear' in t.dataset){
+    if(t.dataset.armed){NOTE.done={};saveNote(NOTE);render();}
+    else{t.dataset.armed='1';t.textContent='정말 비울까요? 한 번 더 누르세요';}
+  }
+});
+document.addEventListener('input',e=>{if(e.target.id==='stname'){NOTE.name=e.target.value;saveNote(NOTE);}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.classList.contains('inp')&&e.target.tagName==='INPUT'&&e.target.id!=='stname'){
+    const q=e.target.closest('.q'); if(q&&q.dataset.q!==undefined) checkQ(+q.dataset.q);
+  }
+});
+let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(view.name==='learn'&&cur.tab==='chart')drawViz();},150);});
+
+(function(){
+  const d=new Date(), w='일월화수목금토'[d.getDay()];
+  document.getElementById('today').textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${w}요일`;
+})();
+render();
+
+/* ================= 떠 있는 계산기 ================= */
+(function(){
+  const panel=document.getElementById('calc'), tab=document.getElementById('calc-tab');
+  const exprEl=document.getElementById('calc-expr'), outEl=document.getElementById('calc-out'), msg=document.getElementById('calc-msg');
+  let expr='', ans=0, last=null, justEval=false, lastInput=null;
+
+  // 계산식 해석 (eval 없이): 덧셈·뺄셈 < 곱셈·나눗셈 < 부호 < 제곱(²) < 괄호·√
+  function tokenize(s){
+    const t=[]; let i=0;
+    while(i<s.length){
+      const c=s[i];
+      if(/[0-9.]/.test(c)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;const n=s.slice(i,j);if((n.match(/\./g)||[]).length>1)throw '소수점이 두 번 들어갔어요';t.push({n:Number(n)});i=j;}
+      else if(s.startsWith('Ans',i)){t.push({n:ans});i+=3;}
+      else {t.push({o:c});i++;}
+    }
+    return t;
+  }
+  function evaluate(s){
+    const t=tokenize(s); let p=0;
+    const peek=()=>t[p], isO=(x)=>t[p]&&t[p].o===x;
+    const startsFactor=()=>t[p]&&(t[p].n!==undefined||t[p].o==='('||t[p].o==='√');
+    function expr_(){let v=term();while(isO('+')||isO('−')){const o=t[p++].o,r=term();v=o==='+'?v+r:v-r;}return v;}
+    function term(){let v=unary();
+      while(true){
+        if(isO('×')){p++;v*=unary();}
+        else if(isO('÷')){p++;const r=unary();if(r===0)throw '0으로 나눌 수 없어요';v/=r;}
+        else if(startsFactor()){v*=unary();}
+        else break;
+      }return v;}
+    function unary(){if(isO('−')){p++;return -unary();}if(isO('+')){p++;return unary();}return post();}
+    function post(){let v=prim();while(isO('²')){p++;v=v*v;}return v;}
+    function prim(){
+      const k=peek(); if(!k) throw '식이 끝나지 않았어요';
+      if(k.n!==undefined){p++;return k.n;}
+      if(k.o==='('){p++;const v=expr_();if(isO(')'))p++;return v;}
+      if(k.o==='√'){p++;const v=post();if(v<0)throw '음수의 제곱근은 구할 수 없어요';return Math.sqrt(v);}
+      throw '식을 다시 확인해 주세요';
+    }
+    const v=expr_(); if(p<t.length) throw '식을 다시 확인해 주세요';
+    if(!Number.isFinite(v)) throw '계산할 수 없는 식이에요';
+    return v;
+  }
+  const show=v=>{const r=Math.round(v*1e8)/1e8;return String(r);};
+  function paint(){
+    exprEl.textContent=justEval?expr+' =':expr;
+    outEl.classList.remove('err');
+    if(justEval){outEl.textContent=show(last);return;}
+    try{outEl.textContent=expr?show(evaluate(expr)):'0';}catch(e){outEl.textContent=expr||'0';}
+  }
+  function press(k){
+    if(k==='C'){expr='';justEval=false;last=null;paint();return;}
+    if(k==='back'){if(justEval){justEval=false;}else expr=expr.endsWith('Ans')?expr.slice(0,-3):expr.slice(0,-1);paint();return;}
+    if(k==='='){
+      if(!expr)return;
+      try{last=evaluate(expr);ans=last;justEval=true;paint();}
+      catch(e){outEl.textContent=typeof e==='string'?e:'식을 다시 확인해 주세요';outEl.classList.add('err');exprEl.textContent=expr;}
+      return;
+    }
+    if(justEval){ // 계산이 끝난 뒤: 연산자는 직전 답에 이어서, 숫자는 새로 시작
+      expr=/^[+−×÷²]$/.test(k)?'Ans'+k:'';
+      justEval=false;
+      if(/^[+−×÷²]$/.test(k)){paint();return;}
+    }
+    expr+=k; paint();
+  }
+  function open(v){
+    panel.hidden=!v; tab.setAttribute('aria-expanded',v);
+    if(v) panel.querySelector('[data-k="7"]').focus({preventScroll:true});
+  }
+  tab.addEventListener('click',()=>open(panel.hidden));
+  document.getElementById('calc-close').addEventListener('click',()=>{open(false);tab.focus();});
+  document.getElementById('calc-keys').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)press(b.dataset.k);});
+
+  // 학생이 마지막으로 누른 답 칸을 기억했다가 결과를 넣어 줌
+  const remember=e=>{const el=e.target;if(el.matches&&el.matches('input.inp')&&el.id!=='stname')lastInput=el;};
+  document.addEventListener('focusin',remember);
+  document.addEventListener('pointerdown',remember);
+  document.getElementById('calc-put').addEventListener('click',()=>{
+    if(!lastInput||!document.body.contains(lastInput)){msg.textContent='먼저 문제의 답 칸을 한 번 눌러 주세요.';return;}
+    let v=justEval?last:null;
+    if(v===null){try{v=expr?evaluate(expr):null;}catch(e){v=null;}}
+    if(v===null){msg.textContent='먼저 계산을 해 주세요.';return;}
+    lastInput.value=String(Math.round(v*100)/100);
+    lastInput.focus({preventScroll:true});
+    msg.textContent=Number.isInteger(Math.round(v*100)/100)||Math.abs(v*100-Math.round(v*100))<1e-9?'답 칸에 넣었어요. "확인"을 눌러 채점해 보세요.':'소수 둘째 자리까지 넣었어요. 문제에서 말한 자리까지 반올림했는지 확인하세요.';
+  });
+
+  // 키보드 입력: 답 칸이나 이유 칸에 쓰는 중이 아닐 때만
+  document.addEventListener('keydown',e=>{
+    if(panel.hidden) return;
+    const tg=e.target; if(tg.matches&&tg.matches('input,textarea,select')) return;
+    const map={'*':'×','x':'×','/':'÷','-':'−','+':'+','(':'(',')':')','.':'.','^':'²','r':'√','Enter':'=','=':'=','Backspace':'back','Escape':'esc','Delete':'C'};
+    let k=/^[0-9]$/.test(e.key)?e.key:map[e.key];
+    if(!k) return;
+    e.preventDefault();
+    if(k==='esc'){open(false);tab.focus();return;}
+    press(k);
+  });
+
+  // 머리 부분을 끌어 위치 옮기기 (넓은 화면)
+  const head=document.getElementById('calc-head'); let drag=null;
+  head.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button')||window.innerWidth<=600) return;
+    const r=panel.getBoundingClientRect(); drag={dx:e.clientX-r.left,dy:e.clientY-r.top}; head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener('pointermove',e=>{
+    if(!drag) return;
+    const w=panel.offsetWidth,h=panel.offsetHeight;
+    const x=Math.min(Math.max(0,e.clientX-drag.dx),window.innerWidth-w), y=Math.min(Math.max(0,e.clientY-drag.dy),window.innerHeight-h);
+    panel.style.left=x+'px'; panel.style.top=y+'px'; panel.style.right='auto';
+  });
+  head.addEventListener('pointerup',()=>{drag=null;});
+})();
+</script>
+
+</html>
