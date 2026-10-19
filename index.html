@@ -841,7 +841,7 @@ function learnPage(d,route){
         :`<label>${esc(f.label)} <input class="inp" id="q${i}f${j}" inputmode="decimal" autocomplete="off">${f.unit?esc(f.unit):''}</label>`).join('')}</div>`;
     }
     return `<section class="q" data-q="${i}"><h4><span class="qno">문제 ${no}</span>${esc(q.title)}</h4><p class="hint">${esc(q.hint)}</p>${body}
-      <div class="q-actions"><button class="btn" data-check="${i}">확인</button><button class="btn ghost" data-sol="${i}" aria-expanded="false">풀이 보기</button></div>
+      <div class="q-actions"><button class="btn" data-check="${i}">확인</button></div>
       <p class="fb" id="fb${i}" aria-live="polite"></p><div class="solution" id="sol${i}" hidden>${q.sol}</div></section>`;
   }).join('');
   const isTwo=d.kind==='two';
@@ -917,6 +917,10 @@ function drawViz(){
 
 function checkQ(i){
   const q=cur.qs[i]; let ok=0;
+  const fb=document.getElementById('fb'+i);
+  // 풀이는 모든 칸에 답을 입력하고 확인을 눌러야 열림
+  const empty=q.fields.filter((f,j)=>!document.getElementById(`q${i}f${j}`).value.trim()).length;
+  if(empty){fb.className='fb no';fb.textContent=q.fields.length>1?`빈 칸이 ${empty}개 있어요. 모든 칸에 답을 입력해야 풀이를 볼 수 있어요.`:'답을 먼저 입력해 주세요. 답을 입력해야 풀이를 볼 수 있어요.';return;}
   q.fields.forEach((f,j)=>{
     const el=document.getElementById(`q${i}f${j}`); let good;
     if(f.pick) good=el.value===f.ans;
@@ -924,9 +928,9 @@ function checkQ(i){
     else good=close(parseNum(el.value),f.ans);
     el.classList.toggle('ok',good); el.classList.toggle('no',!good); if(good) ok++;
   });
-  const fb=document.getElementById('fb'+i);
-  if(ok===q.fields.length){fb.className='fb ok';fb.textContent='정답이에요! ✓';}
-  else{fb.className='fb no';fb.textContent=q.fields.length>2?`${q.fields.length}칸 중 ${ok}칸이 맞았어요. 빨간 칸을 다시 확인해 보세요.`:'다시 생각해 보세요. 막히면 "풀이 보기"를 눌러도 좋아요.';}
+  if(ok===q.fields.length){fb.className='fb ok';fb.textContent='정답이에요! ✓ 아래 풀이로 한 번 더 확인해 보세요.';}
+  else{fb.className='fb no';fb.textContent=q.fields.length>2?`${q.fields.length}칸 중 ${ok}칸이 맞았어요. 아래 풀이와 비교해 빨간 칸을 고쳐 보세요.`:'아쉬워요. 아래 풀이와 내 풀이를 비교해 보고 다시 도전해 보세요.';}
+  document.getElementById('sol'+i).hidden=false;
 }
 
 document.addEventListener('click',e=>{
@@ -939,7 +943,6 @@ document.addEventListener('click',e=>{
   else if('back' in t.dataset) back();
   else if(t.dataset.tab){cur.tab=t.dataset.tab;drawViz();}
   else if(t.dataset.check!==undefined) checkQ(+t.dataset.check);
-  else if(t.dataset.sol!==undefined){const s=document.getElementById('sol'+t.dataset.sol);s.hidden=!s.hidden;t.setAttribute('aria-expanded',!s.hidden);t.textContent=s.hidden?'풀이 보기':'풀이 접기';}
   else if('submit' in t.dataset){
     const pick=document.querySelector('input[name=pick]:checked'), reason=document.getElementById('reason').value.trim(), fb=document.getElementById('fb-choose');
     if(!pick){fb.className='fb no';fb.textContent='먼저 하나를 골라 주세요.';return;}
