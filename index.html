@@ -318,6 +318,7 @@ svg .mtext{stroke:var(--card)}
 .inp.sm{border-radius:10px}
 .btn{border:0;border-radius:999px;background:var(--sky-d);color:var(--paper);padding:7px 18px;font-size:15px}
 .btn.ghost{background:var(--paper-2);color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:wait}
 .solution{background:var(--lemon);border-radius:14px}
 .solution .mid{background:var(--pink-d);color:var(--paper);border-radius:6px}
 .note{background:var(--paper-2);border-radius:14px}
@@ -586,7 +587,12 @@ const close = (x,ans) => Number.isFinite(x) && Math.abs(x-ans) <= 0.05+1e-9;
 const KEY='tongsu-note-v1';
 function loadNote(){try{return JSON.parse(localStorage.getItem(KEY))||{name:'',done:{}};}catch(e){return {name:'',done:{}};}}
 function saveNote(n){try{localStorage.setItem(KEY,JSON.stringify(n));}catch(e){}}
-let NOTE=loadNote();
+let NOTE=loadNote(); NOTE.prog=NOTE.prog||{};
+
+/* ================= 선생님께 제출 =================
+   Google 스프레드시트의 Apps Script 웹 앱 주소를 아래에 붙여 넣으면 '선생님께 제출하기'가 동작합니다.
+   (설정 방법: 통수시간 폴더의 '제출함-설정방법.txt' 참고) */
+const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbxqIuEE2_ZualInamy4UgmO3zAyJdbYkkVjQrknDZntMB4uecA-6iVdNmnR83pmGsZqdQ/exec';
 
 /* ================= 그래프 (SVG) ================= */
 function niceStep(range,count){
@@ -885,20 +891,51 @@ function explainHtml(d,choice){
     <p>${esc(d.why)}</p>${stats}`;
 }
 
+function noteItems(){return Object.entries(NOTE.done).map(([id,v])=>({d:byId(id),v})).filter(x=>x.d).sort((a,b)=>a.v.at-b.v.at);}
+// 자료 하나의 계산 문제 결과 요약
+function progOf(d){
+  const total=buildQs(d,'concept').filter(q=>!q.note).length, P=NOTE.prog[d.id]||{}, rs=Object.values(P);
+  return {total, solved:rs.filter(r=>r.ok).length, first:rs.filter(r=>r.first).length, tries:rs.reduce((s,r)=>s+r.tries,0)};
+}
+function bestName(d){return d.kind==='two'?d.best:CATS[d.best].name;}
 function notePage(){
-  const items=Object.entries(NOTE.done).map(([id,v])=>({d:byId(id),v})).filter(x=>x.d).sort((a,b)=>a.v.at-b.v.at);
+  const items=noteItems();
+  const sent=NOTE.sentAt?`마지막 제출: ${new Date(NOTE.sentAt).toLocaleString('ko-KR',{month:'long',day:'numeric',hour:'numeric',minute:'2-digit'})}`:'';
   return `<div class="page"><button class="back" data-back>← 이전 면으로</button>
-    <div class="page-head"><span class="kicker">내 학습 노트</span><h2>내가 공부한 통계자료</h2><p class="byline">이 기기의 브라우저에만 저장돼요. 다 끝나면 복사해서 선생님께 제출하세요.</p></div>
-    <div class="fields-row" style="margin-bottom:12px"><label for="stname">이름</label><input class="inp" id="stname" value="${esc(NOTE.name||'')}" placeholder="3학년 ○반 ○번 이름" style="width:16em"></div>
-    ${items.length?`<ul class="note-list">${items.map(({d,v})=>`<li><span class="meta"><span class="tag">${CATS[d.cat].name}</span><span class="tag">${esc(fieldName(d.field))}</span></span>
-      <h3>${esc(d.title)}</h3><p><b>내 선택:</b> ${esc(v.choice)}</p><p><b>이유:</b> ${esc(v.reason)}</p></li>`).join('')}</ul>
-      <div class="q-actions"><button class="btn" data-copy>학습 노트 복사하기</button><button class="btn ghost" data-clear>노트 비우기</button></div><p class="fb" id="fb-note" aria-live="polite"></p>
+    <div class="page-head"><span class="kicker">내 학습 노트</span><h2>내가 공부한 통계자료</h2><p class="byline">학습을 마치면 반·번호·이름을 쓰고 "선생님께 제출하기"를 눌러 주세요. 기록은 이 기기의 브라우저에 저장돼요.</p></div>
+    <div class="fields-row student" style="margin-bottom:14px">
+      <label for="stcls">반</label><input class="inp" id="stcls" value="${esc(NOTE.cls||'')}" inputmode="numeric" placeholder="예) 3" style="width:4.5em">
+      <label for="stnum">번호</label><input class="inp" id="stnum" value="${esc(NOTE.num||'')}" inputmode="numeric" placeholder="예) 12" style="width:4.5em">
+      <label for="stname">이름</label><input class="inp" id="stname" value="${esc(NOTE.name||'')}" placeholder="이름" style="width:9em">
+    </div>
+    ${items.length?`<ul class="note-list">${items.map(({d,v})=>{const p=progOf(d);return `<li><span class="meta"><span class="tag">${CATS[d.cat].name}</span><span class="tag">${esc(fieldName(d.field))}</span></span>
+      <h3>${esc(d.title)}</h3><p><b>계산 문제:</b> ${p.total}문제 중 ${p.solved}문제 해결 (처음에 맞힌 문제 ${p.first}개)</p><p><b>내 선택:</b> ${esc(v.choice)} · 토닥쌤의 선택: ${esc(bestName(d))}</p><p><b>이유:</b> ${esc(v.reason)}</p></li>`;}).join('')}</ul>
+      <div class="q-actions"><button class="btn" data-send>선생님께 제출하기</button><button class="btn ghost" data-copy>복사하기</button><button class="btn ghost" data-clear>노트 비우기</button></div>
+      <p class="fb" id="fb-note" aria-live="polite">${sent}</p>
       <textarea class="inp" id="copybox" hidden readonly></textarea>`
-      :`<p class="empty">아직 제출한 자료가 없어요. 1면에서 통계자료를 골라 마지막 문제까지 풀어 보세요.</p>`}</div>`;
+      :`<p class="empty">아직 끝까지 푼 자료가 없어요. 1면에서 통계자료를 골라 마지막 문제(이유 쓰기)까지 풀어 보세요.</p>`}</div>`;
 }
 function noteText(){
-  const items=Object.entries(NOTE.done).map(([id,v])=>({d:byId(id),v})).filter(x=>x.d).sort((a,b)=>a.v.at-b.v.at);
-  return `[통수시간 학습 노트] ${NOTE.name||''}\n`+items.map(({d,v},i)=>`${i+1}. ${d.title} (${CATS[d.cat].name})\n   내 선택: ${v.choice}\n   이유: ${v.reason}`).join('\n');
+  return `[통수시간 학습 노트] ${NOTE.cls||''}반 ${NOTE.num||''}번 ${NOTE.name||''}\n`+noteItems().map(({d,v},i)=>{const p=progOf(d);
+    return `${i+1}. ${d.title} (${CATS[d.cat].name})\n   계산 문제: ${p.total}문제 중 ${p.solved}문제 해결 (처음에 맞힌 문제 ${p.first}개)\n   내 선택: ${v.choice} / 토닥쌤의 선택: ${bestName(d)}\n   이유: ${v.reason}`;}).join('\n');
+}
+async function sendNote(btn){
+  const fb=document.getElementById('fb-note');
+  const say=(cls,msg)=>{fb.className='fb '+cls;fb.textContent=msg;};
+  if(!String(NOTE.cls||'').trim()||!String(NOTE.num||'').trim()||!String(NOTE.name||'').trim()){say('no','반, 번호, 이름을 모두 써 주세요.');return;}
+  if(!SUBMIT_URL){say('no','선생님이 아직 제출함을 연결하지 않았어요. "복사하기"를 눌러 선생님이 알려 준 곳에 붙여 넣어 주세요.');return;}
+  const records=noteItems().map(({d,v})=>{const p=progOf(d);return {id:d.id,title:d.title,cat:CATS[d.cat].name,field:fieldName(d.field),
+    total:p.total,solved:p.solved,first:p.first,tries:p.tries,choice:v.choice,best:bestName(d),same:v.choice===bestName(d),reason:v.reason};});
+  btn.disabled=true; say('','제출하는 중이에요…');
+  try{
+    // Apps Script 웹 앱은 다른 사이트의 응답을 읽을 수 없게 막혀 있어서(no-cors) 전송 성공 여부만 확인
+    await fetch(SUBMIT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({cls:String(NOTE.cls).trim(),num:String(NOTE.num).trim(),name:String(NOTE.name).trim(),records})});
+    NOTE.sentAt=Date.now(); saveNote(NOTE);
+    say('ok',`제출했어요! (${new Date().toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'})}) 자료를 더 풀면 다시 제출해도 돼요.`);
+  }catch(err){
+    say('no','제출하지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요. 계속 안 되면 "복사하기"로 보내 주세요.');
+  }finally{btn.disabled=false;}
 }
 
 function drawViz(){
@@ -928,6 +965,9 @@ function checkQ(i){
     else good=close(parseNum(el.value),f.ans);
     el.classList.toggle('ok',good); el.classList.toggle('no',!good); if(good) ok++;
   });
+  // 문제별 기록: 확인 횟수, 처음에 맞혔는지, 결국 맞혔는지 (선생님 제출용)
+  const P=NOTE.prog[cur.d.id]=NOTE.prog[cur.d.id]||{}, r=P[i]=P[i]||{tries:0,first:null,ok:false};
+  r.tries++; if(r.first===null) r.first=ok===q.fields.length; if(ok===q.fields.length) r.ok=true; saveNote(NOTE);
   if(ok===q.fields.length){fb.className='fb ok';fb.textContent='정답이에요! ✓ 아래 풀이로 한 번 더 확인해 보세요.';}
   else{fb.className='fb no';fb.textContent=q.fields.length>2?`${q.fields.length}칸 중 ${ok}칸이 맞았어요. 아래 풀이와 비교해 빨간 칸을 고쳐 보세요.`:'아쉬워요. 아래 풀이와 내 풀이를 비교해 보고 다시 도전해 보세요.';}
   document.getElementById('sol'+i).hidden=false;
@@ -958,14 +998,18 @@ document.addEventListener('click',e=>{
     const fallback=()=>{const b=document.getElementById('copybox');b.hidden=false;b.value=txt;b.select();fb.className='fb';fb.textContent='자동 복사가 막혀 있어요. 아래 글이 선택되어 있으니 Ctrl+C(휴대폰은 길게 눌러 복사)로 복사하세요.';};
     try{navigator.clipboard.writeText(txt).then(()=>{fb.className='fb ok';fb.textContent='복사했어요. 과제 제출란에 붙여 넣으세요.';},fallback);}catch(err){fallback();}
   }
+  else if('send' in t.dataset) sendNote(t);
   else if('clear' in t.dataset){
-    if(t.dataset.armed){NOTE.done={};saveNote(NOTE);render();}
+    if(t.dataset.armed){NOTE.done={};NOTE.prog={};delete NOTE.sentAt;saveNote(NOTE);render();}
     else{t.dataset.armed='1';t.textContent='정말 비울까요? 한 번 더 누르세요';}
   }
 });
-document.addEventListener('input',e=>{if(e.target.id==='stname'){NOTE.name=e.target.value;saveNote(NOTE);}});
+document.addEventListener('input',e=>{
+  const k={stcls:'cls',stnum:'num',stname:'name'}[e.target.id];
+  if(k){NOTE[k]=e.target.value;saveNote(NOTE);}
+});
 document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&e.target.classList.contains('inp')&&e.target.tagName==='INPUT'&&e.target.id!=='stname'){
+  if(e.key==='Enter'&&e.target.classList.contains('inp')&&e.target.tagName==='INPUT'&&!e.target.closest('.student')){
     const q=e.target.closest('.q'); if(q&&q.dataset.q!==undefined) checkQ(+q.dataset.q);
   }
 });
@@ -1051,7 +1095,7 @@ render();
   document.getElementById('calc-keys').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(b)press(b.dataset.k);});
 
   // 학생이 마지막으로 누른 답 칸을 기억했다가 결과를 넣어 줌
-  const remember=e=>{const el=e.target;if(el.matches&&el.matches('input.inp')&&el.id!=='stname')lastInput=el;};
+  const remember=e=>{const el=e.target;if(el.matches&&el.matches('input.inp')&&!el.closest('.student'))lastInput=el;};
   document.addEventListener('focusin',remember);
   document.addEventListener('pointerdown',remember);
   document.getElementById('calc-put').addEventListener('click',()=>{
